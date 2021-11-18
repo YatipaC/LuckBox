@@ -1,24 +1,36 @@
-import logo from './logo.svg';
-import './App.css';
+import styled, { createGlobalStyle } from 'styled-components'
+
+import bg from './images/background.png'
+import Footer from "./components/footer"
+
+const GlobalStyle = createGlobalStyle`
+  body {
+    font-family: 'VT323', monospace;
+    color: white;
+    background-image: url(${bg});
+    /* Full height */
+    height: 100vh;
+
+    /* Center and scale the image nicely */
+    background-position: center;
+    background-repeat: no-repeat;
+    background-size: cover;
+  }
+`;
+
+const Wrapper = styled.div`
+   
+`
+
 
 function App() {
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+    <>
+      <GlobalStyle />
+      <Wrapper>
+        <Footer />
+      </Wrapper>
+    </>
   );
 }
 
