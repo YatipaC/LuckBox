@@ -21,19 +21,19 @@ describe("LuckBox", function () {
   let tamgWhale
   let usdcWhale
 
-  beforeEach(async () => {
-    ;[admin, player1, player2, player3, dev, treasury] =
-      await ethers.getSigners()
+  // beforeEach(async () => {
+  //   ;[admin, player1, player2, player3, dev, treasury] =
+  //     await ethers.getSigners()
 
-    tamgToken = await ethers.getContractAt(ERC20ABI, TAMG_ADDRESS)
-    usdcToken = await ethers.getContractAt(ERC20ABI, USDC_ADDRESS)
+  //   tamgToken = await ethers.getContractAt(ERC20ABI, TAMG_ADDRESS)
+  //   usdcToken = await ethers.getContractAt(ERC20ABI, USDC_ADDRESS)
 
-    const LuckBox = await ethers.getContractFactory("LuckBox")
+  //   const LuckBox = await ethers.getContractFactory("LuckBox")
 
-    luckBox = LuckBox.deploy()
-  })
+  //   luckBox = LuckBox.deploy()
+  // })
 
-  it("Should work", async () => {
-    expect("gang").to.eq("gang")
-  })
+  // it("Should work", async () => {
+  //   expect("gang").to.eq("gang")
+  // })
 })

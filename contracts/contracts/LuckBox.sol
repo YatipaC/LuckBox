@@ -1,4 +1,4 @@
-//SPDX-License-Identifier: Unlicense
+// SPDX-License-Identifier: MIT
 pragma solidity ^0.6.12;
 
 import "@openzeppelin/contracts/token/ERC721/IERC721.sol";
@@ -9,12 +9,17 @@ import "@openzeppelin/contracts/access/Ownable.sol";
 import "@chainlink/contracts/src/v0.6/VRFConsumerBase.sol";
 
 import "./interfaces/IUniswapV2Router02.sol";
+import "./interfaces/ILuckbox.sol";
 
-contract LuckBox is VRFConsumerBase, Ownable, ReentrancyGuard {
+contract LuckBox is VRFConsumerBase, Ownable, ReentrancyGuard, ILuckbox {
   using SafeMathChainlink for uint256;
   using SafeERC20 for IERC20;
 
   mapping(bytes32 => address) private requestIdToAddress;
+
+  // for identification purposes
+  string public override name;
+  string public override symbol;
 
   address public constant VRF_COORDINATOR =
     0x3d2341ADb2D31f1c5530cDC622016af293177AE0;
@@ -31,7 +36,7 @@ contract LuckBox is VRFConsumerBase, Ownable, ReentrancyGuard {
     0x2791Bca1f2de4661ED88A30C99A7a9449Aa84174;
   address[] public TAMG_TO_LINK_PATH = [TAMG_TOKEN, USDC_TOKEN, LINK_TOKEN];
 
-  uint256 ticketPrice;
+  uint256 public override ticketPrice;
 
   struct Box {
     IERC721 factory;
@@ -48,28 +53,32 @@ contract LuckBox is VRFConsumerBase, Ownable, ReentrancyGuard {
   event RemoveNft(address factory, uint256 tokenId);
 
   constructor(
-    IERC721[] memory _factory,
-    uint256[] memory _tokenId,
+    string memory _name,
+    string memory _symbol,
+    // IERC721[] memory _factory,
+    // uint256[] memory _tokenId,
     uint256 _ticketPrice
   ) public VRFConsumerBase(VRF_COORDINATOR, LINK_TOKEN) {
+    name = _name;
+    symbol = _symbol;
     ticketPrice = _ticketPrice;
 
-    for (uint256 i = 0; i < _factory.length; i++) {
-      IERC721(_factory[i]).safeTransferFrom(
-        msg.sender,
-        address(this),
-        _tokenId[i]
-      );
+    // for (uint256 i = 0; i < _factory.length; i++) {
+    //   IERC721(_factory[i]).safeTransferFrom(
+    //     msg.sender,
+    //     address(this),
+    //     _tokenId[i]
+    //   );
 
-      nftLists.push(
-        Box({
-          factory: _factory[i],
-          tokenId: _tokenId[i],
-          winnerNumber: i,
-          isClaimed: false
-        })
-      );
-    }
+    //   nftLists.push(
+    //     Box({
+    //       factory: _factory[i],
+    //       tokenId: _tokenId[i],
+    //       winnerNumber: i,
+    //       isClaimed: false
+    //     })
+    //   );
+    // }
   }
 
   function setTicketPrice(uint256 _ticketPrice) public onlyOwner {
