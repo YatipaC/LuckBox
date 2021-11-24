@@ -32,8 +32,6 @@ contract LuckBox is VRFConsumerBase, Ownable, ReentrancyGuard, ILuckbox, IERC721
     string public override name;
     string public override symbol;
 
-    bool public locked = false;
-
     uint256 public override ticketPrice;
 
     // Chainlink
@@ -209,13 +207,10 @@ contract LuckBox is VRFConsumerBase, Ownable, ReentrancyGuard, ILuckbox, IERC721
         emit UpdatedTicketPrice(_ticketPrice);
     }
 
-    function setLock(bool _locked) public onlyOwner nonReentrant {
-        locked = _locked;
-    }
 
     // not supported ERC-1155 for now
     // randomness value -> 1% = 100, 10% = 1000 and not allows more than 10% per each slot
-    function depositNft(uint8 _slotId , uint256 _randomness, address _assetAddress, uint256 _tokenId, bool _is1155) public nonReentrant onlyOwner isReady {
+    function depositNft(uint8 _slotId , uint256 _randomness, address _assetAddress, uint256 _tokenId, bool _is1155) public nonReentrant onlyOwner {
         require( MAX_SLOT > _slotId, "Invalid slot ID" );
         require( 1000 >= _randomness , "Randomness value must be between 0-1000");
         require( _is1155 == false , "Not supported ERC-1155 yet");
@@ -237,7 +232,7 @@ contract LuckBox is VRFConsumerBase, Ownable, ReentrancyGuard, ILuckbox, IERC721
         emit DepositedNft(_slotId, _assetAddress, _tokenId, _is1155, _randomness);
     }
 
-    function withdrawNft(uint8 _slotId)  public nonReentrant onlyOwner isReady {
+    function withdrawNft(uint8 _slotId)  public nonReentrant onlyOwner {
         require( MAX_SLOT > _slotId, "Invalid slot ID" );
         require( list[_slotId].locked == true , "The slot is empty" );
         require( list[_slotId].pendingWinnerToClaim == false, "The asset locked is being claimed by the winner");
@@ -316,13 +311,5 @@ contract LuckBox is VRFConsumerBase, Ownable, ReentrancyGuard, ILuckbox, IERC721
     //     );
     // }
 
-
-    modifier isReady() {
-        require(
-            (locked) == false ,
-            "The contract is locked by the owner"
-        );
-        _;
-    }    
 
 }
