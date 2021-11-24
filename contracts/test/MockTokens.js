@@ -4,7 +4,9 @@ const { fromEther } = require("./Helpers")
 
 let erc20
 let erc721
+let erc721_2
 let erc1155
+let erc1155_2
 
 let admin
 let alice
@@ -57,6 +59,9 @@ describe("ERC721", () => {
 
         erc721 = await MockERC721.deploy("Mock NFT", "MOCK")
 
+        // load existing one
+        erc721_2 = await ethers.getContractAt('MockERC721', "0x85cbf58c9d20459339a0b1f586a5fac643a29286")
+
     })
 
     it("Checks NAME & SYMBOL", async function () {
@@ -95,6 +100,13 @@ describe("ERC721", () => {
         expect(await erc721.ownerOf(2)).to.equal(admin.address);
     })
 
+    it("Checks URI of 2nd NFT", async function () {
+
+        expect(await erc721_2.tokenURI(1511)).to.equal("https://gateway.pinata.cloud/ipfs/QmfWCimPFew6S2LL3YEFcexbd1oDpJAZ8n8qJn5UYozCqK")
+        expect(await erc721_2.tokenURI(2502)).to.equal("https://gateway.pinata.cloud/ipfs/QmVe39KBvkSG8mXDr5yARfsqajLP9dcpaMx6YSeXZdS2qF")
+        
+    })
+
 })
 
 describe("ERC1155", () => {
@@ -107,6 +119,10 @@ describe("ERC1155", () => {
 
         erc1155 = await MockERC1155.deploy("https://api.cryptokitties.co/kitties/{id}")
 
+        // load existing one
+        erc1155_2 = await ethers.getContractAt('MockERC1155', "0x2215463d57ed278a778c5cfd9509919acf8cef8d")
+
+        // FIXME: Support Opensea Standard
     })
 
     it("Mints 100 Tokens /w the same id", async function () {
@@ -131,6 +147,13 @@ describe("ERC1155", () => {
         expect(await erc1155.balanceOf(admin.address, 1)).to.equal(100)
         expect(await erc1155.balanceOf(admin.address, 2)).to.equal(100)
         expect(await erc1155.balanceOf(admin.address, 3)).to.equal(100)
+
+    })
+
+    it("Checks second NFT", async function () {
+
+        expect(await erc1155_2.uri(1)).to.equal("https://tamagofinance-nft-metadata-api.vercel.app/api/egg/1")
+        expect(await erc1155_2.uri(2)).to.equal("https://tamagofinance-nft-metadata-api.vercel.app/api/egg/2")
 
     })
 
