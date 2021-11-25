@@ -1,3 +1,3 @@
 # LuckBox
 
-![luckbox-logo](https://user-images.githubusercontent.com/18402217/143382775-f384d7af-840a-4bac-bad4-a575323012c4.png)
+![luckbox](https://user-images.githubusercontent.com/18402217/143382879-339ec331-c045-4524-9ef4-389f74d31724.png)
