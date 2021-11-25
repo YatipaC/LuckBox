@@ -3,6 +3,7 @@ import { ethers } from "ethers"
 import multicall from "../../utils/multicall"
 import LuckBoxABI from "../../abi/LuckBox.json"
 import ERC721ABI from "../../abi/ERC721.json"
+import axios from "axios"
 
 const fetchLuckBoxes = async (luckBoxesToFetch) => {
   const data = await Promise.all(
@@ -39,6 +40,8 @@ const fetchLuckBoxes = async (luckBoxesToFetch) => {
               ]
 
               const [tokenURI] = await multicall(ERC721ABI, erc721Calls)
+
+              const tokenObj = await axios.get(tokenURI)
               return {
                 assetAddress: nftBox.assetAddress,
                 is1155: nftBox.is1155,
@@ -47,7 +50,7 @@ const fetchLuckBoxes = async (luckBoxesToFetch) => {
                 randomnessChance: nftBox.randomnessChance.toString(),
                 tokenId: nftBox.tokenId.toString(),
                 winner: nftBox.winner,
-                tokenURI: tokenURI[0],
+                tokenURI: tokenObj.data
               }
             }
 

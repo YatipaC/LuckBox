@@ -1,11 +1,13 @@
+import { useState } from "react"
 import bg from "./images/background.png"
 import Header from "./components/header"
 import Assets from "./components/assets"
-import styled, { createGlobalStyle } from 'styled-components'
-import ParticlesBg from "particles-bg";
+import styled, { createGlobalStyle } from "styled-components"
+import ParticlesBg from "particles-bg"
 // import bg from './images/background.png'
 import Footer from "./components/footer"
 import Title from "./components/title"
+import Draw from "./components/draw"
 
 const GlobalStyle = createGlobalStyle`
   * {
@@ -31,16 +33,26 @@ const GlobalStyle = createGlobalStyle`
 const Wrapper = styled.div``
 
 function App() {
+  const [luckBoxSelected, setLuckBoxSelected] = useState()
+  console.log(luckBoxSelected)
+
   return (
     <>
       <GlobalStyle />
-      <ParticlesBg type="square" bg={true} />
+      <ParticlesBg type='square' bg={true} />
       <Wrapper>
         <Header />
-        <Assets />
-        <Title/>
+        <Title />
+        {luckBoxSelected ? (
+          <Draw
+            data={luckBoxSelected}
+            setLuckBoxSelected={setLuckBoxSelected}
+          />
+        ) : (
+          <Assets setLuckBoxSelected={setLuckBoxSelected} />
+        )}
         <Footer />
-      </Wrapper> 
+      </Wrapper>
     </>
   )
 }
