@@ -1,8 +1,7 @@
+import React, { useContext } from "react"
 import styled from "styled-components"
 import { useWeb3React } from "@web3-react/core"
-
-import { useERC721 } from "../hooks/useERC721"
-import { NAGA } from "../constants"
+import { FactoryContext } from "../hooks/useFactory"
 
 const Container = styled.div`
   width: 60%;
@@ -14,7 +13,8 @@ const Container = styled.div`
 
 const Assets = () => {
   const { account, library } = useWeb3React()
-  const { balance, name, symbol } = useERC721(NAGA, account, library)
+  const { allBoxesDetail } = useContext(FactoryContext)
+  console.log(allBoxesDetail)
 
   return <Container>Made for Chainlink Hackathon Fall 2021</Container>
 }

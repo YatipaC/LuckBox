@@ -24,25 +24,6 @@
     "anonymous": false,
     "inputs": [
       {
-        "indexed": false,
-        "internalType": "address",
-        "name": "factory",
-        "type": "address"
-      },
-      {
-        "indexed": false,
-        "internalType": "uint256",
-        "name": "tokenId",
-        "type": "uint256"
-      }
-    ],
-    "name": "AddNft",
-    "type": "event"
-  },
-  {
-    "anonymous": false,
-    "inputs": [
-      {
         "indexed": true,
         "internalType": "address",
         "name": "receiver",
@@ -68,9 +49,65 @@
     "anonymous": false,
     "inputs": [
       {
+        "indexed": false,
+        "internalType": "uint8",
+        "name": "slotId",
+        "type": "uint8"
+      },
+      {
+        "indexed": false,
+        "internalType": "address",
+        "name": "winner",
+        "type": "address"
+      }
+    ],
+    "name": "Claimed",
+    "type": "event"
+  },
+  {
+    "anonymous": false,
+    "inputs": [
+      {
+        "indexed": false,
+        "internalType": "uint8",
+        "name": "slotId",
+        "type": "uint8"
+      },
+      {
+        "indexed": false,
+        "internalType": "address",
+        "name": "assetAddress",
+        "type": "address"
+      },
+      {
+        "indexed": false,
+        "internalType": "uint256",
+        "name": "tokenId",
+        "type": "uint256"
+      },
+      {
+        "indexed": false,
+        "internalType": "bool",
+        "name": "is1155",
+        "type": "bool"
+      },
+      {
+        "indexed": false,
+        "internalType": "uint256",
+        "name": "randomness",
+        "type": "uint256"
+      }
+    ],
+    "name": "DepositedNft",
+    "type": "event"
+  },
+  {
+    "anonymous": false,
+    "inputs": [
+      {
         "indexed": true,
         "internalType": "address",
-        "name": "randomer",
+        "name": "drawer",
         "type": "address"
       },
       {
@@ -80,7 +117,26 @@
         "type": "bytes32"
       }
     ],
-    "name": "GetLucky",
+    "name": "Draw",
+    "type": "event"
+  },
+  {
+    "anonymous": false,
+    "inputs": [
+      {
+        "indexed": true,
+        "internalType": "address",
+        "name": "drawer",
+        "type": "address"
+      },
+      {
+        "indexed": false,
+        "internalType": "bool",
+        "name": "won",
+        "type": "bool"
+      }
+    ],
+    "name": "Drawn",
     "type": "event"
   },
   {
@@ -107,18 +163,12 @@
     "inputs": [
       {
         "indexed": false,
-        "internalType": "address",
-        "name": "factory",
-        "type": "address"
-      },
-      {
-        "indexed": false,
         "internalType": "uint256",
-        "name": "tokenId",
+        "name": "ticketPrice",
         "type": "uint256"
       }
     ],
-    "name": "RemoveNft",
+    "name": "UpdatedTicketPrice",
     "type": "event"
   },
   {
@@ -126,12 +176,12 @@
     "inputs": [
       {
         "indexed": false,
-        "internalType": "uint256",
-        "name": "ticketPrice",
-        "type": "uint256"
+        "internalType": "uint8",
+        "name": "slotId",
+        "type": "uint8"
       }
     ],
-    "name": "SetTicketPrice",
+    "name": "WithdrawnNft",
     "type": "event"
   },
   {
@@ -175,57 +225,12 @@
   },
   {
     "inputs": [],
-    "name": "ROUTER",
+    "name": "MAX_SLOT",
     "outputs": [
       {
-        "internalType": "contract IUniswapV2Router02",
+        "internalType": "uint8",
         "name": "",
-        "type": "address"
-      }
-    ],
-    "stateMutability": "view",
-    "type": "function"
-  },
-  {
-    "inputs": [],
-    "name": "TAMG_TOKEN",
-    "outputs": [
-      {
-        "internalType": "address",
-        "name": "",
-        "type": "address"
-      }
-    ],
-    "stateMutability": "view",
-    "type": "function"
-  },
-  {
-    "inputs": [
-      {
-        "internalType": "uint256",
-        "name": "",
-        "type": "uint256"
-      }
-    ],
-    "name": "TAMG_TO_LINK_PATH",
-    "outputs": [
-      {
-        "internalType": "address",
-        "name": "",
-        "type": "address"
-      }
-    ],
-    "stateMutability": "view",
-    "type": "function"
-  },
-  {
-    "inputs": [],
-    "name": "USDC_TOKEN",
-    "outputs": [
-      {
-        "internalType": "address",
-        "name": "",
-        "type": "address"
+        "type": "uint8"
       }
     ],
     "stateMutability": "view",
@@ -247,24 +252,52 @@
   {
     "inputs": [
       {
-        "internalType": "contract IERC721",
-        "name": "_factory",
+        "internalType": "uint8",
+        "name": "_slotId",
+        "type": "uint8"
+      }
+    ],
+    "name": "claimNft",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "uint8",
+        "name": "_slotId",
+        "type": "uint8"
+      },
+      {
+        "internalType": "uint256",
+        "name": "_randomness",
+        "type": "uint256"
+      },
+      {
+        "internalType": "address",
+        "name": "_assetAddress",
         "type": "address"
       },
       {
         "internalType": "uint256",
         "name": "_tokenId",
         "type": "uint256"
+      },
+      {
+        "internalType": "bool",
+        "name": "_is1155",
+        "type": "bool"
       }
     ],
-    "name": "addNft",
+    "name": "depositNft",
     "outputs": [],
     "stateMutability": "nonpayable",
     "type": "function"
   },
   {
     "inputs": [],
-    "name": "getLucky",
+    "name": "draw",
     "outputs": [
       {
         "internalType": "bytes32",
@@ -272,17 +305,66 @@
         "type": "bytes32"
       }
     ],
-    "stateMutability": "nonpayable",
+    "stateMutability": "payable",
     "type": "function"
   },
   {
-    "inputs": [],
-    "name": "locked",
+    "inputs": [
+      {
+        "internalType": "uint256",
+        "name": "_randomNumber",
+        "type": "uint256"
+      }
+    ],
+    "name": "forceDraw",
+    "outputs": [],
+    "stateMutability": "payable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "uint8",
+        "name": "",
+        "type": "uint8"
+      }
+    ],
+    "name": "list",
     "outputs": [
       {
+        "internalType": "address",
+        "name": "assetAddress",
+        "type": "address"
+      },
+      {
+        "internalType": "uint256",
+        "name": "tokenId",
+        "type": "uint256"
+      },
+      {
         "internalType": "bool",
-        "name": "",
+        "name": "is1155",
         "type": "bool"
+      },
+      {
+        "internalType": "bool",
+        "name": "locked",
+        "type": "bool"
+      },
+      {
+        "internalType": "uint256",
+        "name": "randomnessChance",
+        "type": "uint256"
+      },
+      {
+        "internalType": "bool",
+        "name": "pendingWinnerToClaim",
+        "type": "bool"
+      },
+      {
+        "internalType": "address",
+        "name": "winner",
+        "type": "address"
       }
     ],
     "stateMutability": "view",
@@ -304,35 +386,35 @@
   {
     "inputs": [
       {
-        "internalType": "uint256",
+        "internalType": "address",
         "name": "",
-        "type": "uint256"
-      }
-    ],
-    "name": "nftLists",
-    "outputs": [
+        "type": "address"
+      },
       {
-        "internalType": "contract IERC721",
-        "name": "factory",
+        "internalType": "address",
+        "name": "",
         "type": "address"
       },
       {
         "internalType": "uint256",
-        "name": "tokenId",
+        "name": "",
         "type": "uint256"
       },
       {
-        "internalType": "uint256",
-        "name": "winnerNumber",
-        "type": "uint256"
-      },
-      {
-        "internalType": "bool",
-        "name": "isClaimed",
-        "type": "bool"
+        "internalType": "bytes",
+        "name": "",
+        "type": "bytes"
       }
     ],
-    "stateMutability": "view",
+    "name": "onERC721Received",
+    "outputs": [
+      {
+        "internalType": "bytes4",
+        "name": "",
+        "type": "bytes4"
+      }
+    ],
+    "stateMutability": "nonpayable",
     "type": "function"
   },
   {
@@ -346,6 +428,25 @@
       }
     ],
     "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "uint256",
+        "name": "input",
+        "type": "uint256"
+      }
+    ],
+    "name": "parseRandomUInt256",
+    "outputs": [
+      {
+        "internalType": "uint256",
+        "name": "",
+        "type": "uint256"
+      }
+    ],
+    "stateMutability": "pure",
     "type": "function"
   },
   {
@@ -367,19 +468,6 @@
     "type": "function"
   },
   {
-    "inputs": [
-      {
-        "internalType": "uint256",
-        "name": "_nftId",
-        "type": "uint256"
-      }
-    ],
-    "name": "removeNft",
-    "outputs": [],
-    "stateMutability": "nonpayable",
-    "type": "function"
-  },
-  {
     "inputs": [],
     "name": "renounceOwnership",
     "outputs": [],
@@ -389,14 +477,58 @@
   {
     "inputs": [
       {
-        "internalType": "bool",
-        "name": "_locked",
-        "type": "bool"
+        "internalType": "uint256",
+        "name": "",
+        "type": "uint256"
       }
     ],
-    "name": "setLock",
-    "outputs": [],
-    "stateMutability": "nonpayable",
+    "name": "result",
+    "outputs": [
+      {
+        "internalType": "bytes32",
+        "name": "requestId",
+        "type": "bytes32"
+      },
+      {
+        "internalType": "address",
+        "name": "drawer",
+        "type": "address"
+      },
+      {
+        "internalType": "bool",
+        "name": "won",
+        "type": "bool"
+      },
+      {
+        "internalType": "uint8",
+        "name": "slot",
+        "type": "uint8"
+      },
+      {
+        "internalType": "uint256",
+        "name": "output",
+        "type": "uint256"
+      },
+      {
+        "internalType": "uint256",
+        "name": "eligibleRange",
+        "type": "uint256"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "resultCount",
+    "outputs": [
+      {
+        "internalType": "uint256",
+        "name": "",
+        "type": "uint256"
+      }
+    ],
+    "stateMutability": "view",
     "type": "function"
   },
   {
@@ -410,6 +542,25 @@
     "name": "setTicketPrice",
     "outputs": [],
     "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "bytes4",
+        "name": "interfaceId",
+        "type": "bytes4"
+      }
+    ],
+    "name": "supportsInterface",
+    "outputs": [
+      {
+        "internalType": "bool",
+        "name": "",
+        "type": "bool"
+      }
+    ],
+    "stateMutability": "view",
     "type": "function"
   },
   {
@@ -439,6 +590,32 @@
     "type": "function"
   },
   {
+    "inputs": [],
+    "name": "totalEth",
+    "outputs": [
+      {
+        "internalType": "uint256",
+        "name": "",
+        "type": "uint256"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "totalLink",
+    "outputs": [
+      {
+        "internalType": "uint256",
+        "name": "",
+        "type": "uint256"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
     "inputs": [
       {
         "internalType": "address",
@@ -447,6 +624,52 @@
       }
     ],
     "name": "transferOwnership",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "winningRates",
+    "outputs": [
+      {
+        "internalType": "uint256",
+        "name": "",
+        "type": "uint256"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "withdrawAllEth",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "uint256",
+        "name": "_amount",
+        "type": "uint256"
+      }
+    ],
+    "name": "withdrawLink",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "uint8",
+        "name": "_slotId",
+        "type": "uint8"
+      }
+    ],
+    "name": "withdrawNft",
     "outputs": [],
     "stateMutability": "nonpayable",
     "type": "function"
