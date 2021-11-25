@@ -196,6 +196,7 @@ contract LuckBox is VRFConsumerBase, Ownable, ReentrancyGuard, IERC721Receiver, 
         require( MAX_SLOT > _slotId, "Invalid slot ID" );
         require( 1000 >= _randomness , "Randomness value must be between 0-1000");
         require( _is1155 == false , "Not supported ERC-1155 yet");
+        require( list[_slotId].locked == false , "The slot is occupied" );
 
         // take the NFT
         if (_is1155) {
