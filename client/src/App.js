@@ -1,9 +1,17 @@
+<<<<<<< HEAD
 import styled, { createGlobalStyle } from "styled-components"
 
 import bg from "./images/background.png"
 import Footer from "./components/footer"
 import Header from "./components/header"
 import Assets from "./components/assets"
+=======
+import styled, { createGlobalStyle } from 'styled-components'
+import ParticlesBg from "particles-bg";
+// import bg from './images/background.png'
+import Footer from "./components/footer"
+import Title from "./components/title"
+>>>>>>> 6d401e710322117410681a8536f5a8c4bb8ead81
 
 const GlobalStyle = createGlobalStyle`
   * {
@@ -14,8 +22,8 @@ const GlobalStyle = createGlobalStyle`
 
   body {
     font-family: 'VT323', monospace;
-    color: white;
-    background-image: url(${bg});
+    color: #231F20;
+    
     /* Full height */
     height: 100vh;
 
@@ -32,11 +40,13 @@ function App() {
   return (
     <>
       <GlobalStyle />
+      <ParticlesBg type="square" bg={true} />
       <Wrapper>
         <Header />
         <Assets />
+        <Title/>
         <Footer />
-      </Wrapper>
+      </Wrapper> 
     </>
   )
 }
