@@ -1,13 +1,14 @@
 import styled, { createGlobalStyle } from 'styled-components'
-
-import bg from './images/background.png'
+import ParticlesBg from "particles-bg";
+// import bg from './images/background.png'
 import Footer from "./components/footer"
+import Title from "./components/title"
 
 const GlobalStyle = createGlobalStyle`
   body {
     font-family: 'VT323', monospace;
-    color: white;
-    background-image: url(${bg});
+    color: #231F20;
+    
     /* Full height */
     height: 100vh;
 
@@ -27,9 +28,13 @@ function App() {
   return (
     <>
       <GlobalStyle />
+      <ParticlesBg type="square" bg={true} />
       <Wrapper>
+        <Title/>
+        
+
         <Footer />
-      </Wrapper>
+      </Wrapper> 
     </>
   );
 }
