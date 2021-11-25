@@ -4,7 +4,7 @@ pragma solidity 0.6.12;
 
 import "@openzeppelin/contracts/utils/ReentrancyGuard.sol";
 import "./LuckBox.sol";
-import "./interfaces/ILuckbox.sol";
+// import "./interfaces/ILuckbox.sol";
 
 /**
  * @title Factory for creating new luckbox contract.
@@ -32,20 +32,20 @@ contract Factory is ReentrancyGuard {
 
         luckbox.transferOwnership(msg.sender);
 
-        ILuckbox newLuckbox = ILuckbox(address(luckbox));
+        address newLuckbox = (address(luckbox));
 
         boxes.push(
             Box({
                 name: name,
                 symbol: symbol,
                 owner: msg.sender,
-                contractAddress: address(newLuckbox)
+                contractAddress: newLuckbox
             })
         );
 
         totalBoxes += 1;
 
-        emit LuckboxCreated(address(newLuckbox));
+        emit LuckboxCreated(newLuckbox);
     }
 
     function getBoxOwner(uint256 _id) public view returns (address) {

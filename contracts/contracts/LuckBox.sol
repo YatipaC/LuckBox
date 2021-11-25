@@ -16,11 +16,11 @@ import "@openzeppelin/contracts/utils/ReentrancyGuard.sol";
 import "@openzeppelin/contracts/access/Ownable.sol";
 import "@chainlink/contracts/src/v0.6/VRFConsumerBase.sol";
 
-import "./interfaces/IUniswapV2Router02.sol";
-import "./interfaces/ILuckbox.sol";
+// import "./interfaces/IUniswapV2Router02.sol";
+// import "./interfaces/ILuckbox.sol";
 // import "./utility/LibMath.sol";
 
-contract LuckBox is VRFConsumerBase, Ownable, ReentrancyGuard, ILuckbox, IERC721Receiver, ERC165, ERC721Holder {
+contract LuckBox is VRFConsumerBase, Ownable, ReentrancyGuard, IERC721Receiver, ERC165, ERC721Holder {
     using SafeMathChainlink for uint256;
     using SafeERC20 for IERC20;
     // using LibMathSigned for int256;
@@ -29,10 +29,10 @@ contract LuckBox is VRFConsumerBase, Ownable, ReentrancyGuard, ILuckbox, IERC721
     mapping(bytes32 => address) private requestIdToAddress;
 
     // for identification purposes
-    string public override name;
-    string public override symbol;
+    string public name;
+    string public symbol;
 
-    uint256 public override ticketPrice;
+    uint256 public ticketPrice;
 
     // Chainlink
     address public constant VRF_COORDINATOR =
@@ -45,8 +45,8 @@ contract LuckBox is VRFConsumerBase, Ownable, ReentrancyGuard, ILuckbox, IERC721
 
     // Quickswap
 
-    IUniswapV2Router02 public constant ROUTER =
-        IUniswapV2Router02(0xa5E0829CaCEd8fFDD4De3c43696c57F7D7A678ff);
+    // IUniswapV2Router02 public constant ROUTER =
+    //     IUniswapV2Router02(0xa5E0829CaCEd8fFDD4De3c43696c57F7D7A678ff);
     // address public constant USDC_TOKEN =
     //     0x2791Bca1f2de4661ED88A30C99A7a9449Aa84174;
     
@@ -114,32 +114,6 @@ contract LuckBox is VRFConsumerBase, Ownable, ReentrancyGuard, ILuckbox, IERC721
         emit Draw(msg.sender, requestId);
     }
 
-    function getLucky() public nonReentrant returns (bytes32 requestId) {
-        // IERC20(TAMG_TOKEN).safeTransferFrom(
-        //     msg.sender,
-        //     address(this),
-        //     ticketPrice
-        // );
-        // uint256[] memory amount = ROUTER.getAmountsIn(FEE, TAMG_TO_LINK_PATH);
-        // uint256 tamgToLinkAmount = amount[amount.length.sub(1)];
-        // require(tamgToLinkAmount >= ticketPrice, "Not enoung TAMG.");
-        // ROUTER.swapTokensForExactTokens(
-        //     FEE,
-        //     tamgToLinkAmount,
-        //     TAMG_TO_LINK_PATH,
-        //     address(this),
-        //     block.timestamp
-        // );
-        // require(
-        //     IERC20(LINK_TOKEN).balanceOf(address(this)) >= FEE,
-        //     "Not enoung link."
-        // );
-        // requestId = requestRandomness(KEY_HASH, FEE);
-        // requestIdToAddress[requestId] = msg.sender;
-
-        // emit GetLucky(msg.sender, requestId);
-    }
-
     // find the current winning rates
     function winningRates() public view returns (uint256) {
         uint256 increment = 0;
@@ -160,6 +134,10 @@ contract LuckBox is VRFConsumerBase, Ownable, ReentrancyGuard, ILuckbox, IERC721
 
     function totalEth() public view returns (uint256) {
         return address(this).balance;
+    }
+
+    function totalLink() public view returns (uint256) {
+        return IERC20(LINK_TOKEN).balanceOf(address(this));
     }
 
     function claimNft(uint8 _slotId) public {
@@ -198,6 +176,10 @@ contract LuckBox is VRFConsumerBase, Ownable, ReentrancyGuard, ILuckbox, IERC721
         uint amount = address(this).balance;
         (bool success, ) = payable(msg.sender).call{value: amount}("");
         require(success, "Failed to send Ether");
+    }
+
+    function withdrawLink(uint _amount) public onlyOwner nonReentrant {
+        IERC20(LINK_TOKEN).safeTransfer(msg.sender, _amount);
     }
 
     function setTicketPrice(uint256 _ticketPrice) public onlyOwner nonReentrant {
@@ -301,15 +283,5 @@ contract LuckBox is VRFConsumerBase, Ownable, ReentrancyGuard, ILuckbox, IERC721
 
         emit Drawn(_drawer, won);
     }
-
-    // function _claimNft(uint256 _nftId, address _receiver) internal {
-    //     Box storage nft = nftLists[_nftId];
-    //     IERC721(nft.factory).safeTransferFrom(
-    //         address(this),
-    //         _receiver,
-    //         nft.tokenId
-    //     );
-    // }
-
 
 }
