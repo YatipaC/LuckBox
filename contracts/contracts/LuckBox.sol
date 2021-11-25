@@ -194,7 +194,7 @@ contract LuckBox is VRFConsumerBase, Ownable, ReentrancyGuard, IERC721Receiver, 
     // randomness value -> 1% = 100, 10% = 1000 and not allows more than 10% per each slot
     function depositNft(uint8 _slotId , uint256 _randomness, address _assetAddress, uint256 _tokenId, bool _is1155) public nonReentrant onlyOwner {
         require( MAX_SLOT > _slotId, "Invalid slot ID" );
-        require( 1000 >= _randomness , "Randomness value must be between 0-1000");
+        require( 1000 >= _randomness && _randomness >= 1 , "Randomness value must be between 0-1000");
         require( _is1155 == false , "Not supported ERC-1155 yet");
         require( list[_slotId].locked == false , "The slot is occupied" );
 
