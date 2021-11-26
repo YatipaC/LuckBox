@@ -3,7 +3,7 @@ import React, {
   createContext,
   useState,
   useEffect,
-  useContext,
+  useCallback,
 } from "react"
 import { useWeb3React } from "@web3-react/core"
 import BigNumber from "bignumber.js"
@@ -17,6 +17,11 @@ const Provider = ({ children }) => {
   const { account, library } = useWeb3React()
   const [factoryDetail, setFactoryDetail] = useState()
   const [allBoxesDetail, setAllBoxesDetail] = useState()
+  const [tick, setTick] = useState(0)
+
+  const increaseTick = useCallback(() => {
+    setTick(tick + 1)
+  }, [tick])
 
   const getFactory = async () => {
     const data = await fetchFactory(FACTORY)
@@ -31,15 +36,15 @@ const Provider = ({ children }) => {
   useEffect(() => {
     if (!factoryDetail) return
     getAllBoxesDetail()
-  }, [factoryDetail])
+  }, [factoryDetail, tick])
 
   useEffect(() => {
     getFactory()
   }, [account])
 
   const factoryContext = useMemo(
-    () => ({ factoryDetail, allBoxesDetail }),
-    [factoryDetail, allBoxesDetail]
+    () => ({ factoryDetail, allBoxesDetail, increaseTick, tick }),
+    [factoryDetail, allBoxesDetail, increaseTick]
   )
 
   return (

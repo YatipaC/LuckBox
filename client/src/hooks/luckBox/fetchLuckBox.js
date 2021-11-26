@@ -10,15 +10,44 @@ const fetchLuckBoxes = async (luckBoxesToFetch) => {
     luckBoxesToFetch.map(async (luckBoxConfig) => {
       const { boxAddress } = luckBoxConfig
 
-      const [ticketPrice] = await multicall(LuckBoxABI, [
+      const [ticketPrice, resultCount] = await multicall(LuckBoxABI, [
         {
           address: boxAddress,
           name: "ticketPrice",
         },
+        {
+          address: boxAddress,
+          name: "resultCount",
+        },
       ])
 
+      const resultData = await Promise.all(
+        Array(parseInt(resultCount[0]))
+          .fill(0)
+          .map(async (_, index) => {
+            const calls = [
+              {
+                address: boxAddress,
+                name: "result",
+                params: [index],
+              },
+            ]
+
+            const [result] = await multicall(LuckBoxABI, calls)
+
+            return {
+              requestId: result.requestId,
+              drawer: result.drawer,
+              won: result.won,
+              slot: result.slot.toString(),
+              output: result.output.toString(),
+              eligibleRange: result.eligibleRange.toString(),
+            }
+          })
+      )
+
       const data = await Promise.all(
-        Array(parseInt(8))
+        Array(parseInt(9))
           .fill(0)
           .map(async (_, index) => {
             const calls = [
@@ -50,7 +79,7 @@ const fetchLuckBoxes = async (luckBoxesToFetch) => {
                 randomnessChance: nftBox.randomnessChance.toString(),
                 tokenId: nftBox.tokenId.toString(),
                 winner: nftBox.winner,
-                tokenURI: tokenObj.data
+                tokenURI: tokenObj.data,
               }
             }
 
@@ -71,6 +100,7 @@ const fetchLuckBoxes = async (luckBoxesToFetch) => {
         ...luckBoxConfig,
         nftList: data,
         ticketPrice: ethers.utils.formatEther(ticketPrice[0]._hex),
+        resultData: resultData.reverse(),
       }
     })
   )

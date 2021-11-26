@@ -9,7 +9,7 @@ import WalletsModal from "./modals/WalletConnectModal"
 
 const Wrapper = styled.div`
   position: absolute;
-  top: 3%;
+  top: 1.5%;
   left: 0px;
   font-size: 24px;
 `

@@ -42,18 +42,22 @@ function App() {
       <GlobalStyle />
       <ParticlesBg type='square' bg={true} />
       <Wrapper>
-        <Title />
         <Account />
         {luckBoxSelected ? (
-          <Draw
-            data={luckBoxSelected}
-            setLuckBoxSelected={setLuckBoxSelected}
-          />
+          <>
+            <Draw
+              data={luckBoxSelected}
+              setLuckBoxSelected={setLuckBoxSelected}
+            />
+          </>
         ) : (
-          <Assets setLuckBoxSelected={setLuckBoxSelected} />
+          <>
+            <Title />
+            <Assets setLuckBoxSelected={setLuckBoxSelected} />
+            <Info />
+            <Footer />
+          </>
         )}
-        <Info/>
-        <Footer />
       </Wrapper>
     </>
   )
