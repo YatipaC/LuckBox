@@ -2,7 +2,7 @@ import styled from "styled-components"
 
 const Wrapper = styled.div`
     position: absolute;
-    top: 10%;
+    top: 13%;
     left: 0px;
     font-size: 24px;
 
