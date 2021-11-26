@@ -13,19 +13,12 @@ const Connector = styled.div`
   margin-bottom: 12px;
   color: #000;
 
-  font-size: 16px;
+  font-size: 20px;
 
   :hover {
     cursor: pointer;
     color: white;
-    background-image: linear-gradient(
-        rgba(255, 255, 255, 0),
-        rgba(255, 255, 255, 0)
-      ),
-      linear-gradient(101deg, #78e4ff, #ff48fa);
-    background-origin: border-box;
-    background-clip: content-box, border-box;
-    box-shadow: none;
+    background-color: #008080;
   }
 
   display: flex;

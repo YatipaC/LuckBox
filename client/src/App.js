@@ -1,6 +1,6 @@
 import { useState } from "react"
 import bg from "./images/background.png"
-import Header from "./components/header"
+import Account from "./components/account"
 import Assets from "./components/assets"
 import styled, { createGlobalStyle } from "styled-components"
 import ParticlesBg from "particles-bg"
@@ -8,6 +8,7 @@ import ParticlesBg from "particles-bg"
 import Footer from "./components/footer"
 import Title from "./components/title"
 import Draw from "./components/draw"
+import Info from "./components/info"
 
 const GlobalStyle = createGlobalStyle`
   * {
@@ -41,22 +42,22 @@ function App() {
       <GlobalStyle />
       <ParticlesBg type='square' bg={true} />
       <Wrapper>
+        <Account />
         {luckBoxSelected ? (
           <>
-          <Header />
-          <Draw
-            data={luckBoxSelected}
-            setLuckBoxSelected={setLuckBoxSelected}
-          />
+            <Draw
+              data={luckBoxSelected}
+              setLuckBoxSelected={setLuckBoxSelected}
+            />
           </>
         ) : (
           <>
-            <Header />
             <Title />
             <Assets setLuckBoxSelected={setLuckBoxSelected} />
+            <Info />
+            <Footer />
           </>
         )}
-        <Footer />
       </Wrapper>
     </>
   )

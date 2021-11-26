@@ -2,6 +2,8 @@
 
 > NFT Gachapon powered by Chainlink VRF
 
+![Screenshot from 2021-11-26 13-18-06](https://user-images.githubusercontent.com/18402217/143536004-388059ee-f87f-4f94-919b-b0a656b26211.png)
+
 ## Introduction
 
 TBD
