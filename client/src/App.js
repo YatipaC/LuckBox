@@ -41,15 +41,20 @@ function App() {
       <GlobalStyle />
       <ParticlesBg type='square' bg={true} />
       <Wrapper>
-        <Header />
-        <Title />
         {luckBoxSelected ? (
+          <>
+          <Header />
           <Draw
             data={luckBoxSelected}
             setLuckBoxSelected={setLuckBoxSelected}
           />
+          </>
         ) : (
-          <Assets setLuckBoxSelected={setLuckBoxSelected} />
+          <>
+            <Header />
+            <Title />
+            <Assets setLuckBoxSelected={setLuckBoxSelected} />
+          </>
         )}
         <Footer />
       </Wrapper>

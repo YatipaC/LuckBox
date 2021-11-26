@@ -90,6 +90,8 @@ export const Button = styled.div`
     line-height: 18px;
     font-weight: bold;
 
+    text-align: center;
+
     ${props => props.disabled
         ?
         `

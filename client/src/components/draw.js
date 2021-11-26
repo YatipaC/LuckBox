@@ -1,10 +1,11 @@
-import React, { useContext } from "react"
+import React, { useContext, useCallback, useState } from "react"
 import styled from "styled-components"
 import { Button } from "./Base"
 import { ethers } from "ethers"
 import { useWeb3React } from "@web3-react/core"
 import { FactoryContext } from "../hooks/useFactory"
 import { shortAddress } from "../helper/index"
+import { useLuckBox } from "../hooks/useLuckBox"
 
 const Wrapper = styled.div`
   height: 100vh;
@@ -20,7 +21,7 @@ const Container = styled.div`
   position: relative;
   width: 60%;
   margin: 0 auto;
-  top: 30%;
+  top: 3%;
   display: flex;
   flex-direction: column;
 `
@@ -35,6 +36,8 @@ const BoxContainer = styled.div`
   display: flex;
   flex-direction: column;
   align-items: center;
+  width: 166px;
+  height: 166px;
 `
 
 const FactoryDetail = styled.div`
@@ -58,35 +61,131 @@ const Header = styled.div`
 `
 
 const DrawContainer = styled.div`
+  position: absolute;
+  top: 15%;
+  right: 5%;
+  width: 200px;
   display: flex;
-  align-items: center;
-	justify-content: center;
-  margin-top: 12px;
-  width: 100%;
+  justify-content: center;
+  flex-direction: column;
 `
 
 const Detail = styled.div``
 
-const Box = ({ data, setLuckBoxSelected }) => {
+const TicketPrice = styled.div`
+  padding: 12px;
+  background-color: #dbbe8d;
+  border-radius: 10px;
+  border: 3px solid #565049;
+  margin-top: 12px;
+`
+
+const NftDetailContainer = styled.div`
+  position: absolute;
+  top: 15%;
+  left: 5%;
+  width: 200px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+  padding: 12px;
+  background-color: #dbbe8d;
+  border-radius: 10px;
+  border: 3px solid #565049;
+`
+
+const ResultDataContainer = styled.div`
+  z-index: 3;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 12px;
+  background-color: #dbbe8d;
+  border-radius: 10px;
+  border: 3px solid #565049;
+  margin-top: 12px;
+  width: 100%;
+`
+
+const ResultRow = styled.div`
+  display: flex;
+  align-items: center;
+  width: 100%;
+`
+
+const Box = ({ data, setSelectedNftDetail }) => {
   return (
     <>
-      {data.assetAddress === ethers.constants.AddressZero ? null : (
-        <BoxContainer>
+      {data.assetAddress === ethers.constants.AddressZero ||
+      data.winner !== ethers.constants.AddressZero ? (
+        <BoxContainer onClick={() => setSelectedNftDetail(null)}></BoxContainer>
+      ) : (
+        <BoxContainer onClick={() => setSelectedNftDetail(data)}>
           <img width='128' height='128' src={data.tokenURI.image_url} />
-          <FactoryDetail>
-            <Header>Name:</Header>
-            <Detail>{data.tokenURI.name}</Detail>
-          </FactoryDetail>
         </BoxContainer>
       )}
     </>
   )
 }
 
+const ResultCotainer = ({ data, account, onClaim }) => {
+  const isWinner =
+    data.won && data.drawer.toLowerCase() === account.toLowerCase()
+  console.log(data)
+  return (
+    <ResultRow>
+      <div style={{ width: "40%", textAlign: "center" }}>{data.drawer}</div>
+      <div style={{ width: "40%", textAlign: "center" }}>
+        {data.won ? "Win" : "Lose"}
+      </div>
+      <div style={{ width: "20%", textAlign: "center" }}>
+        {isWinner && (
+          <div style={{ cursor: "pointer" }} onClick={() => onClaim(data.slot)}>
+            Claim
+          </div>
+        )}
+      </div>
+    </ResultRow>
+  )
+}
+
 const Draw = ({ data, setLuckBoxSelected }) => {
   const { account, library } = useWeb3React()
-  const { allBoxesDetail } = useContext(FactoryContext)
-  const { nftList, ticketPrice } = data
+  const { increaseTick, tick } = useContext(FactoryContext)
+  const { nftList, ticketPrice, resultData, boxAddress } = data
+  const { draw, claimNft } = useLuckBox(boxAddress, account, library)
+
+  const [loading, setLoading] = useState(false)
+  const [selectedNftDetail, setSelectedNftDetail] = useState()
+
+  const onDraw = useCallback(async () => {
+    try {
+      setLoading(true)
+      await draw(ticketPrice)
+    } catch (e) {
+      console.log(e)
+    } finally {
+      increaseTick()
+      setLoading(false)
+    }
+  }, [account, library])
+
+  const onClaim = useCallback(
+    async (slotId) => {
+      try {
+        setLoading(true)
+        await claimNft(slotId)
+      } catch (e) {
+        console.log(e)
+      } finally {
+        increaseTick()
+        setLoading(false)
+      }
+    },
+    [account, library]
+  )
 
   return (
     <Wrapper>
@@ -98,14 +197,42 @@ const Draw = ({ data, setLuckBoxSelected }) => {
           <div>Ticket: {ticketPrice} MATIC</div>
         </TitleContainer>
         <NFTContainer>
-          {nftList
-            ? nftList.map((data, index) => <Box key={index} data={data} />)
-            : null}
+          {nftList &&
+            nftList.map((data, index) => (
+              <Box
+                key={index}
+                data={data}
+                setSelectedNftDetail={setSelectedNftDetail}
+              />
+            ))}
         </NFTContainer>
-        <DrawContainer>
-          <Button>Draw</Button>
-        </DrawContainer>
+        <ResultDataContainer>
+          {resultData &&
+            resultData.map((data, index) => (
+              <ResultCotainer
+                key={index}
+                data={data}
+                account={account}
+                onClaim={onClaim}
+              />
+            ))}
+        </ResultDataContainer>
       </Container>
+      {selectedNftDetail && (
+        <NftDetailContainer>
+          <img width='96' height='96' src={selectedNftDetail.tokenURI.image_url} />
+          <FactoryDetail>
+            <Header>Name:</Header>
+            <Detail>{selectedNftDetail.tokenURI.name}</Detail>
+          </FactoryDetail>
+        </NftDetailContainer>
+      )}
+      <DrawContainer>
+        <Button disabled={loading} onClick={onDraw}>
+          Draw
+        </Button>
+        <TicketPrice>Ticket Price: {ticketPrice} MATIC</TicketPrice>
+      </DrawContainer>
     </Wrapper>
   )
 }

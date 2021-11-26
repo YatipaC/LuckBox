@@ -23,6 +23,7 @@ const BoxContainer = styled.div`
   border-radius: 10px;
   border: 3px solid #565049;
   cursor: pointer;
+  margin: 12px;
 `
 
 const FactoryDetail = styled.div`
