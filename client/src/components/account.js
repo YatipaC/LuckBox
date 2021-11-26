@@ -9,20 +9,22 @@ import WalletsModal from "./modals/WalletConnectModal"
 
 const Wrapper = styled.div`
   position: absolute;
-  top: 5%;
+  top: 3%;
   left: 0px;
   font-size: 24px;
 `
 
 const Container = styled.div`
-  width: 100vw;
-  text-align: center;
+  width: 100vw; 
   display: flex;
-  padding: 0px 48px;
 `
 
 const ConnectButton = styled(Button)`
-  width: 200px;
+  width: 135px;
+`
+
+const DisconnectButton = styled(ConnectButton)`
+  display: inline;
 `
 
 const Display = styled(Button)`
@@ -36,7 +38,7 @@ const BlockiesContainer = styled(Blockies)`
   border-radius: 50%;
 `
 
-const Footer = () => {
+const Account = () => {
   const { account, deactivate, library } = useWeb3React()
 
   const [walletLoginVisible, setWalletLoginVisible] = useState(false)
@@ -50,20 +52,25 @@ const Footer = () => {
         walletLoginVisible={walletLoginVisible}
       />
       <Container>
-        <div style={{ flex: 1 }} />
-        {account ? (
-          <Display onClick={deactivate}>
-            <BlockiesContainer seed={account} size={12} scale={3} />
-            {shortAddress(account)}
-          </Display>
-        ) : (
-          <ConnectButton onClick={toggleWalletConnect}>
-            Connect Wallet
-          </ConnectButton>
-        )}
+        <div style={{ marginLeft: "auto", marginRight: "auto" }}>
+          {account ? (
+            <DisconnectButton onClick={deactivate}>
+              {/*<Display onClick={deactivate}>
+               <BlockiesContainer seed={account} size={12} scale={3} />
+              {shortAddress(account)} 
+            </Display>*/}
+              Disconnect 🔌
+            </DisconnectButton >
+          ) : (
+            <ConnectButton onClick={toggleWalletConnect}>
+              Connect 🏦
+            </ConnectButton>
+          )}
+        </div>
+
       </Container>
     </Wrapper>
   )
 }
 
-export default Footer
+export default Account

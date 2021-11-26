@@ -80,13 +80,13 @@ export const Box = styled.div`
 
 export const Button = styled.div`
 
-    background-color: #dbbe8d;
+    background-color: #008080;
     border-radius: 10px;
     border: 3px solid #565049;
-
+    color: white;
     padding: 5px 20px 5px 20px;
     margin-top: 12px;
-    font-size: 16px;
+    font-size: 20px;
     line-height: 18px;
     font-weight: bold;
 
@@ -103,14 +103,7 @@ export const Button = styled.div`
         }
     `
     }
-
-
-    
-    @media only screen and (max-width: 1200px) {
-        padding: 5px 10px 5px 10px;
-        font-size: 14px;
-        line-height: 16px;
-    }
+ 
 
 
 `
@@ -134,4 +127,26 @@ export const Buttons = styled.div`
     margin-top: 0px;
   }
 
+`
+
+export const Arrow = styled.i`
+    border: solid black;
+    border-width: 0 5px 5px 0;
+    display: inline-block;
+    padding: 3px;
+    height: 8px; 
+    cursor: pointer;
+    margin-left: 10px;
+    margin-right: 10px;
+    margin-top: 45px;
+`
+
+export const LeftArrow = styled(Arrow)`
+    transform: rotate(135deg);
+    -webkit-transform: rotate(135deg);
+`
+
+export const RightArrow = styled(Arrow)`
+    transform: rotate(-45deg);
+    -webkit-transform: rotate(-45deg);
 `
