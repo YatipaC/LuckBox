@@ -18,7 +18,7 @@ https://luckbox.wtf
 
 ## Features
 
-* Enabling creation of Gachapon-styled for NFT for anyone
+* Enabling creation of Gachapon-styled for NFT
 * Earn drawing fees in $MATIC
 * Support of ERC-721 NFT
 * Customizable winning chance per NFT from 0.1% to 10%
