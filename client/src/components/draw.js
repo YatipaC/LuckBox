@@ -180,7 +180,13 @@ const ResultRow = styled.div`
 
 const Box = ({ data, setSelectedNftDetail, id, active }) => {
 
+  let imageUrl
 
+  if (data && data.tokenURI && data.tokenURI.image_url) {
+    imageUrl = data.tokenURI.image_url
+  } else if (data && data.tokenURI && data.tokenURI.image) {
+    imageUrl = data.tokenURI.image
+  }
 
   return (
     <>
@@ -189,7 +195,7 @@ const Box = ({ data, setSelectedNftDetail, id, active }) => {
         <BoxContainer active={active} onClick={() => setSelectedNftDetail(null)}></BoxContainer>
       ) : (
         <BoxContainer active={active} onClick={() => setSelectedNftDetail({ id, ...data })}>
-          <img width='128' height='128' src={data.tokenURI.image_url} />
+          <img width='128' height='128' src={imageUrl} />
         </BoxContainer>
       )}
     </>
@@ -254,14 +260,15 @@ const Draw = ({ data, setLuckBoxSelected }) => {
     [account, library]
   )
 
-  const pendingClaimed = useMemo(() => {
+  let imageUrl
 
-    if (selectedNftDetail && account && selectedNftDetail.won && selectedNftDetail.drawer.toLowerCase() === account.toLowerCase()) {
-      return true
-    }
+  if (selectedNftDetail && selectedNftDetail.tokenURI && selectedNftDetail.tokenURI.image_url) {
+    imageUrl = selectedNftDetail.tokenURI.image_url
+  } else if (selectedNftDetail && selectedNftDetail.tokenURI && selectedNftDetail.tokenURI.image) {
+    imageUrl = selectedNftDetail.tokenURI.image
+  }
 
-    return false
-  }, [selectedNftDetail, account])
+
 
   return (
     <Wrapper>
@@ -331,7 +338,7 @@ const Draw = ({ data, setLuckBoxSelected }) => {
                         <td>
                           {isWinner && <Button style={{ fontSize: "14px", padding: "0px" }} disabled={loading} onClick={() => onClaim(data.slot)}>
                             Claim
-                          </Button> }
+                          </Button>}
                         </td>
                       </tr>
                     )
@@ -351,11 +358,11 @@ const Draw = ({ data, setLuckBoxSelected }) => {
       {selectedNftDetail && (
         <NftDetailContainer>
           <ItemContainer>
-            <img width='96' height='96' src={selectedNftDetail.tokenURI.image_url} />
+            {imageUrl && <img width='96' height='96' src={imageUrl} />}
             <br />
             Slot : {Number(selectedNftDetail.id) + 1}
             <br />
-            NFT Name : {selectedNftDetail.tokenURI.name}
+            NFT Name : {selectedNftDetail.tokenURI ? selectedNftDetail.tokenURI.name : ""}
             <br />
             Asset Address : <a href={`https://polygonscan.com/address/${selectedNftDetail.assetAddress}`} target="_blank">{shortAddress(selectedNftDetail.assetAddress)}</a>
             <br />
@@ -370,6 +377,33 @@ const Draw = ({ data, setLuckBoxSelected }) => {
               <hr/>
               hello
             </FactoryDetail> */}
+
+            {data && data.name === "CryptoSharks Eureka" &&
+              (
+                <>
+                  <hr />
+                  <p>The CryptoSharks is a collection of unique Sharks living on Polygon Blockchain.</p>
+                  <p>Floor Price : $22 (27 Nov. 22)</p>
+                  <p>Links : <a href="https://opensea.io/collection/originative-cryptosharks" target="_blank">OpenSea</a>, <a href="https://twitter.com/NFT_Originative" target="_blank">Twitter</a></p>
+                </>
+              )
+
+            }
+
+            { data && data.name === "Chicken Derby Shalala" &&
+            (
+              <>
+              <hr/>
+              <p>Join the most fun and exciting Ethereum-based game where you can own and race your chicken to earn ETH. Brought by the makers of Ganja Farmer.</p>
+              <p>Floor Price : $226 (27 Nov. 22)</p>
+                  <p>Links : <a href="https://opensea.io/collection/chicken-derby" target="_blank">OpenSea</a>, <a href="https://twitter.com/bitlovincom" target="_blank">Twitter</a></p>
+              </>
+            )
+
+            }
+
+
+
           </ItemContainer>
           {/* <Button style={{ width: "100%" }} disabled={loading || !pendingClaimed} onClick={() => onClaim(selectedNftDetail.id)}>
             Claim

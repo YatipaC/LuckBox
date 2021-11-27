@@ -46,6 +46,8 @@ const fetchLuckBoxes = async (luckBoxesToFetch) => {
           })
       )
 
+      const waitFor = delay => new Promise(resolve => setTimeout(resolve, delay));
+
       const data = await Promise.all(
         Array(parseInt(9))
           .fill(0)
@@ -68,9 +70,31 @@ const fetchLuckBoxes = async (luckBoxesToFetch) => {
                 },
               ]
 
-              const [tokenURI] = await multicall(ERC721ABI, erc721Calls)
+              let [tokenURI] = await multicall(ERC721ABI, erc721Calls)
 
-              const tokenObj = await axios.get(tokenURI)
+              let tokenObj
+
+              try {
+
+                // delayed on Pinata cloud
+                if (tokenURI && tokenURI.toString().indexOf("gateway.pinata.cloud") !== -1) {
+                  // tokenURI = tokenURI.toString().replace("gateway.pinata.cloud", "ipfs.io")
+                  await waitFor(100*index)
+                }
+
+                tokenObj = await axios.get(tokenURI)
+
+                // replace pinata node with IPFS node
+                if (tokenObj && tokenObj.data && tokenObj.data.image && tokenObj.data.image.indexOf("gateway.pinata.cloud") !== -1) {
+                  tokenObj.data.image = tokenObj.data.image.replace("gateway.pinata.cloud", "ipfs.io")
+                }
+
+              } catch (e) {
+                console.log(`failed at index ${index}`)
+              }
+
+              
+
               return {
                 assetAddress: nftBox.assetAddress,
                 is1155: nftBox.is1155,
@@ -79,7 +103,7 @@ const fetchLuckBoxes = async (luckBoxesToFetch) => {
                 randomnessChance: nftBox.randomnessChance.toString(),
                 tokenId: nftBox.tokenId.toString(),
                 winner: nftBox.winner,
-                tokenURI: tokenObj.data,
+                tokenURI: tokenObj && tokenObj.data,
               }
             }
 
