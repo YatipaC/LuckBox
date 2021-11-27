@@ -52,7 +52,7 @@ cd client
 yarn start
 ```
 
-## Smart Contracts
+## Deployment
 
 ### Polygon Mainnet
 
