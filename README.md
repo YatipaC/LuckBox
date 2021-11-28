@@ -6,7 +6,9 @@
 
 ## Introduction
 
-TBD
+Normally, the only way for NFT artists and projects to distribute their NFT is listing on NFT exchange such as OpenSea, many of them are struggles because of many reason, we're making the Gashapon-liked smart contract to help distributing along with generating some revenues at the same time.
+
+The Gashapon which is vending machine that dispense capsules of toys. These vending machines appear almost at every corner in Japan's streets. People love the excitement to open a box that is full of hope and imagination with infinite possibility. People buy special NFT with lower price. There really is something for everyone, no matter your age, gender or interests. In terms of NFT owners and creaters, they don’t find the right buyers for the right NFT. The boxes consisting of unique/ the hottest NFT will
 
 ## Live
 https://luckbox.wtf
