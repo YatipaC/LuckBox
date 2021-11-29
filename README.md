@@ -17,7 +17,7 @@ https://luckbox.wtf
 
 * Polygon chain - L2 chain, cheaper gas price and faster than Ethereum Mainnet
 * Chainlink VRF - A random number generator solution from Chainlink
-* Alchemy Ethereum API - Providng RPC calls from the frontend without the need of web3 wallet connection.
+* Alchemy Ethereum API - Providing RPC calls from the frontend without the need of web3 wallet connection.
 
 ## Features
 
