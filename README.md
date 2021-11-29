@@ -16,7 +16,8 @@ https://luckbox.wtf
 ## Technologies
 
 * Polygon chain
-* Chainlink VRF 
+* Chainlink VRF
+* Alchemy Ethereum API
 
 ## Features
 
