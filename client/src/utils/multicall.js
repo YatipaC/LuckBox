@@ -6,7 +6,7 @@ import { MULTICALL_ADDRESS } from "../constants"
 
 const multicall = async (abi, calls) => {
   const httpProvider = new Web3.providers.HttpProvider(
-    "https://rpc-mainnet.matic.quiknode.pro",
+    "https://polygon-mainnet.g.alchemy.com/v2/YOfrEecK53Mj2KA4KYVreDBzZYqGfOMQ",
     { timeout: 10000 }
   )
   const web3 = new Web3(httpProvider)
