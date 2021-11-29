@@ -10,6 +10,7 @@ import BigNumber from "bignumber.js"
 import fetchFactory from "./factory/fetchFactory"
 import fetchLuckBox from "./luckBox/fetchLuckBox"
 import { FACTORY } from "../constants"
+import useInterval from "../hooks/useInterval"
 
 export const FactoryContext = createContext({})
 
@@ -19,9 +20,18 @@ const Provider = ({ children }) => {
   const [allBoxesDetail, setAllBoxesDetail] = useState()
   const [tick, setTick] = useState(0)
 
+  const [delay, setDelay] = useState(10000)
+
   const increaseTick = useCallback(() => {
     setTick(tick + 1)
   }, [tick])
+
+  useInterval(
+    () => {
+      increaseTick()
+    },
+    10000
+  )
 
   const getFactory = async () => {
     const data = await fetchFactory(FACTORY)

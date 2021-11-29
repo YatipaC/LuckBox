@@ -45,9 +45,9 @@ const Info = () => {
             <Box>
                 Try your luck with the prize of well-known NFTs available on Polygon Mainnet in a permissionless manner, secure and extremely fair for anyone who dare to bet.
                 <p>
-                    <a href="#" target="_blank">Medium Post</a>|
-                    <a href="#" target="_blank">Twitter</a>|
-                    <a href="#" target="_blank">Telegram</a>
+                    <a href="https://medium.com/@pisuthd/chainlink-hackathon-fall-2021-nft-luckbox-live-now-on-polygon-390d72a57575" target="_blank">Medium Post</a>|
+                    <a href="https://twitter.com/PisuthD" target="_blank">Twitter</a>|
+                    <a href="https://github.com/YatipaC/LuckBox" target="_blank">Github</a>
                 </p>
 
             </Box>

@@ -31,6 +31,8 @@ const BoxContainer = styled.div`
   line-height: 30px;
   overflow: hidden;
   min-height: 100px;
+  display: flex;
+  text-align: center;
 
   :hover {
     opacity: 0.9;
@@ -60,7 +62,7 @@ const Box = ({ data, setLuckBoxSelected }) => {
 
   return (
     <BoxContainer onClick={() => setLuckBoxSelected(data)}>
-      <div style={{ textAlign: "center" }}>
+      <div style={{ margin: "auto" }}>
         {data && data.symbol}
       </div>
       {/* <FactoryDetail>
@@ -86,7 +88,7 @@ const Box = ({ data, setLuckBoxSelected }) => {
 const CreateNewBox = () => {
   return (
     <BoxContainer onClick={() => alert("Stay Tuned!")}>
-      <div style={{ textAlign: "center" }}>
+      <div style={{ margin: "auto" }}>
         Create New LuckBox
       </div>
 
