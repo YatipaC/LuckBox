@@ -15,9 +15,9 @@ https://luckbox.wtf
 
 ## Technologies
 
-* Polygon chain
-* Chainlink VRF
-* Alchemy Ethereum API
+* Polygon chain - L2 chain, cheaper gas price and faster than Ethereum Mainnet
+* Chainlink VRF = A random number generator from Chainlink
+* Alchemy Ethereum API - Providng RPC calls from frontned without the need of web3 wallet connection.
 
 ## Features
 
