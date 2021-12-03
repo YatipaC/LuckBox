@@ -1,10 +1,10 @@
 import React, { useState, useEffect, useCallback, useContext } from "react"
 import { Button, Modal, ModalHeader, ModalBody, ModalFooter } from "reactstrap"
 import { useWeb3React } from "@web3-react/core"
+import styled from "styled-components"
 import { Connectors } from "../../connectors"
 import useEagerConnect from "../../hooks/useEagerConnect"
 import useInactiveListener from "../../hooks/useInactiveListener"
-import styled from "styled-components"
 
 const Connector = styled.div`
   border: 1px solid #ddd;

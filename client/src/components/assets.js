@@ -1,7 +1,7 @@
 import React, { useCallback, useContext, useState } from "react"
 import styled from "styled-components"
 import { useWeb3React } from "@web3-react/core"
-import { FactoryContext } from "../hooks/useFactory"
+import { FactoryContext } from "../hooks/useFactoryData"
 import { shortAddress } from "../helper/index"
 import { LeftArrow, RightArrow, Arrow } from "./Base"
 
@@ -15,7 +15,7 @@ const Container = styled.div`
   margin: 0 auto;
   top: 35%;
   display: flex;
-  justify-content: center; 
+  justify-content: center;
 `
 
 const BoxContainer = styled.div`
@@ -37,11 +37,9 @@ const BoxContainer = styled.div`
   :hover {
     opacity: 0.9;
   }
-  
+
   margin-left: 10px;
   margin-right: 10px;
-
-
 `
 
 const FactoryDetail = styled.div`
@@ -59,12 +57,9 @@ const Header = styled.div`
 const Detail = styled.div``
 
 const Box = ({ data, setLuckBoxSelected }) => {
-
   return (
     <BoxContainer onClick={() => setLuckBoxSelected(data)}>
-      <div style={{ margin: "auto" }}>
-        {data && data.symbol}
-      </div>
+      <div style={{ margin: "auto" }}>{data && data.symbol}</div>
       {/* <FactoryDetail>
         <Header>Contract Address</Header>
         <Detail>{shortAddress(data.boxAddress)}</Detail>
@@ -85,18 +80,15 @@ const Box = ({ data, setLuckBoxSelected }) => {
   )
 }
 
-const CreateNewBox = () => {
+const CreateNewBox = ({ toggleCreateLuckBox }) => {
   return (
-    <BoxContainer onClick={() => alert("Stay Tuned!")}>
-      <div style={{ margin: "auto" }}>
-        Create New LuckBox
-      </div>
-
+    <BoxContainer onClick={toggleCreateLuckBox}>
+      <div style={{ margin: "auto" }}>Create New LuckBox</div>
     </BoxContainer>
   )
 }
 
-const Assets = ({ setLuckBoxSelected }) => {
+const Assets = ({ setLuckBoxSelected, toggleCreateLuckBox }) => {
   const { account, library } = useWeb3React()
   const { allBoxesDetail } = useContext(FactoryContext)
 
@@ -111,48 +103,34 @@ const Assets = ({ setLuckBoxSelected }) => {
   }, [counter])
 
   const onNext = useCallback(() => {
-    if (counter !== (boxes.length)) {
+    if (counter !== boxes.length) {
       setCounter(counter + 1)
     }
   }, [counter, boxes])
 
-
   return (
     <Wrapper>
       <Container>
-        {allBoxesDetail
-          ?
-          (
-            <>
-              <LeftArrow onClick={onPrev} />
-              {boxes[counter] &&
-                (
-                  <Box
-                    data={boxes[counter]}
-                    setLuckBoxSelected={setLuckBoxSelected}
-                  />
-                )
+        {allBoxesDetail ? (
+          <>
+            <LeftArrow onClick={onPrev} />
+            {boxes[counter] && (
+              <Box
+                data={boxes[counter]}
+                setLuckBoxSelected={setLuckBoxSelected}
+              />
+            )}
 
-              }
+            {counter === boxes.length && (
+              <CreateNewBox toggleCreateLuckBox={toggleCreateLuckBox} />
+            )}
 
-              {counter === boxes.length &&
-                (
-                  <CreateNewBox />
-                )
-
-              }
-
-              <RightArrow onClick={onNext} />
-
-            </>
-          )
-          : null}
-        {!allBoxesDetail &&
-          <div style={{ fontSize: "30px", marginTop: "15px" }}>
-            Loading...
-          </div>
-
-        }
+            <RightArrow onClick={onNext} />
+          </>
+        ) : null}
+        {!allBoxesDetail && (
+          <div style={{ fontSize: "30px", marginTop: "15px" }}>Loading...</div>
+        )}
       </Container>
     </Wrapper>
   )

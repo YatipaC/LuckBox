@@ -4,7 +4,7 @@ import App from "./App"
 import { Web3ReactProvider } from "@web3-react/core"
 import "bootstrap/dist/css/bootstrap.min.css"
 import { ethers } from "ethers"
-import FactoryContext from "./hooks/useFactory"
+import FactoryContext from "./hooks/useFactoryData"
 
 const getLibrary = (provider) => {
   const library = new ethers.providers.Web3Provider(provider)

@@ -9,6 +9,8 @@ import Footer from "./components/footer"
 import Title from "./components/title"
 import Draw from "./components/draw"
 import Info from "./components/info"
+import CreateLuckBoxModal from "./components/modals/CreateLuckBoxModal"
+import Manage from "./components/manage"
 
 const GlobalStyle = createGlobalStyle`
   * {
@@ -35,7 +37,15 @@ const Wrapper = styled.div``
 
 function App() {
   const [luckBoxSelected, setLuckBoxSelected] = useState()
-  console.log(luckBoxSelected)
+  const [createLuckBoxVisible, setCreateLuckBoxVisible] = useState(false)
+  const [manageSelected, setManageSelected] = useState(false)
+
+  const toggleCreateLuckBox = () =>
+    setCreateLuckBoxVisible(!createLuckBoxVisible)
+
+  const toggleManageSelected = () => {
+    setManageSelected(!manageSelected)
+  }
 
   return (
     <>
@@ -43,17 +53,32 @@ function App() {
       <ParticlesBg type='square' bg={true} />
       <Wrapper>
         <Account />
+        <CreateLuckBoxModal
+          toggleModal={toggleCreateLuckBox}
+          modalVisible={createLuckBoxVisible}
+        />
         {luckBoxSelected ? (
           <>
-            <Draw
-              data={luckBoxSelected}
-              setLuckBoxSelected={setLuckBoxSelected}
-            />
+            {manageSelected ? (
+              <Manage
+                data={luckBoxSelected}
+                toggleManageSelected={toggleManageSelected}
+              />
+            ) : (
+              <Draw
+                data={luckBoxSelected}
+                setLuckBoxSelected={setLuckBoxSelected}
+                toggleManageSelected={toggleManageSelected}
+              />
+            )}
           </>
         ) : (
           <>
             <Title />
-            <Assets setLuckBoxSelected={setLuckBoxSelected} />
+            <Assets
+              toggleCreateLuckBox={toggleCreateLuckBox}
+              setLuckBoxSelected={setLuckBoxSelected}
+            />
             <Info />
             <Footer />
           </>

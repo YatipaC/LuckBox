@@ -217,7 +217,6 @@ contract LuckBox is
     emit UpdatedTicketPrice(_ticketPrice);
   }
 
-  // not supported ERC-1155 for now
   // randomness value -> 1% = 100, 10% = 1000 and not allows more than 10% per each slot
   function depositNft(
     uint8 _slotId,
