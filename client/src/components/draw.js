@@ -3,7 +3,7 @@ import styled from "styled-components"
 import { Button } from "./Base"
 import { ethers } from "ethers"
 import { useWeb3React } from "@web3-react/core"
-import { FactoryContext } from "../hooks/useFactory"
+import { FactoryContext } from "../hooks/useFactoryData"
 import { shortAddress } from "../helper/index"
 import { useLuckBox } from "../hooks/useLuckBox"
 
@@ -39,8 +39,7 @@ const BoxContainer = styled.div`
   width: 166px;
   height: 166px;
 
-  ${props => props.active && "background-color: #008080;"}
-  
+  ${(props) => props.active && "background-color: #008080;"}
 `
 
 const FactoryDetail = styled.div`
@@ -65,7 +64,6 @@ const NFTContainer = styled.div`
   margin-left: auto;
   margin-right: auto;
 `
-
 
 const Header = styled.div`
   margin-right: 8px;
@@ -106,7 +104,6 @@ const NftDetailContainer = styled.div`
   justify-content: center;
   align-items: center;
   flex-direction: column;
-  
 `
 
 const ItemContainer = styled.div`
@@ -138,15 +135,12 @@ const Steps = styled(TicketPrice)`
   color: black;
 `
 
-
-
-
 const ResultDataContainerWrapper = styled.div`
   z-index: 3;
   display: flex;
   justify-content: center;
   h4 {
-    padding:0px;
+    padding: 0px;
     margin: 0px;
     text-align: center;
     margin-bottom: 5px;
@@ -154,7 +148,6 @@ const ResultDataContainerWrapper = styled.div`
 `
 
 const ResultDataContainer = styled.div`
-  
   flex-direction: column;
   align-items: center;
   border-radius: 10px;
@@ -169,7 +162,6 @@ const ResultDataContainer = styled.div`
   max-width: 700px;
   height: 200px;
   overflow-y: scroll;
-
 `
 
 const ResultRow = styled.div`
@@ -179,7 +171,6 @@ const ResultRow = styled.div`
 `
 
 const Box = ({ data, setSelectedNftDetail, id, active }) => {
-
   let imageUrl
 
   if (data && data.tokenURI && data.tokenURI.image_url) {
@@ -191,10 +182,16 @@ const Box = ({ data, setSelectedNftDetail, id, active }) => {
   return (
     <>
       {data.assetAddress === ethers.constants.AddressZero ||
-        data.pendingWinnerToClaim ? (
-        <BoxContainer active={active} onClick={() => setSelectedNftDetail(null)}></BoxContainer>
+      data.pendingWinnerToClaim ? (
+        <BoxContainer
+          active={active}
+          onClick={() => setSelectedNftDetail(null)}
+        ></BoxContainer>
       ) : (
-        <BoxContainer active={active} onClick={() => setSelectedNftDetail({ id, ...data })}>
+        <BoxContainer
+          active={active}
+          onClick={() => setSelectedNftDetail({ id, ...data })}
+        >
           <img width='128' height='128' src={imageUrl} />
         </BoxContainer>
       )}
@@ -203,9 +200,11 @@ const Box = ({ data, setSelectedNftDetail, id, active }) => {
 }
 
 const ResultContainer = ({ data, account, onClaim }) => {
-  const isWinner = account && data && data.won && data.drawer.toLowerCase() === account.toLowerCase()
-
-
+  const isWinner =
+    account &&
+    data &&
+    data.won &&
+    data.drawer.toLowerCase() === account.toLowerCase()
 
   return (
     <ResultRow>
@@ -224,10 +223,10 @@ const ResultContainer = ({ data, account, onClaim }) => {
   )
 }
 
-const Draw = ({ data, setLuckBoxSelected }) => {
+const Draw = ({ data, setLuckBoxSelected, toggleManageSelected }) => {
   const { account, library } = useWeb3React()
   const { increaseTick, tick } = useContext(FactoryContext)
-  const { nftList, ticketPrice, resultData, boxAddress } = data
+  const { nftList, ticketPrice, resultData, boxAddress, owner } = data
   const { draw, claimNft } = useLuckBox(boxAddress, account, library)
 
   const [loading, setLoading] = useState(false)
@@ -262,17 +261,22 @@ const Draw = ({ data, setLuckBoxSelected }) => {
 
   let imageUrl
 
-  if (selectedNftDetail && selectedNftDetail.tokenURI && selectedNftDetail.tokenURI.image_url) {
+  if (
+    selectedNftDetail &&
+    selectedNftDetail.tokenURI &&
+    selectedNftDetail.tokenURI.image_url
+  ) {
     imageUrl = selectedNftDetail.tokenURI.image_url
-  } else if (selectedNftDetail && selectedNftDetail.tokenURI && selectedNftDetail.tokenURI.image) {
+  } else if (
+    selectedNftDetail &&
+    selectedNftDetail.tokenURI &&
+    selectedNftDetail.tokenURI.image
+  ) {
     imageUrl = selectedNftDetail.tokenURI.image
   }
 
-
-
   return (
     <Wrapper>
-
       <Container>
         <TitleContainer>
           <div style={{ flex: 1 }} onClick={() => setLuckBoxSelected(null)}>
@@ -297,10 +301,7 @@ const Draw = ({ data, setLuckBoxSelected }) => {
         </NFTContainerWrapper>
         <ResultDataContainerWrapper>
           <ResultDataContainer>
-
-            <h4>
-              History
-            </h4>
+            <h4>History</h4>
             <>
               {/* {resultData &&
                 resultData.map((data, index) => (
@@ -314,46 +315,58 @@ const Draw = ({ data, setLuckBoxSelected }) => {
               <table style={{ width: "100%" }}>
                 <thead>
                   <tr>
-                    <th scope="col" width="5%">#</th>
-                    <th scope="col">Drawer</th>
-                    <th scope="col">Won</th>
-                    <th scope="col">Slot</th>
-                    <th scope="col">Output</th>
+                    <th scope='col' width='5%'>
+                      #
+                    </th>
+                    <th scope='col'>Drawer</th>
+                    <th scope='col'>Won</th>
+                    <th scope='col'>Slot</th>
+                    <th scope='col'>Output</th>
                     <th></th>
                   </tr>
                 </thead>
                 <tbody>
-                  {resultData && resultData.map((data, index) => {
+                  {resultData &&
+                    resultData.map((data, index) => {
+                      const isWinner =
+                        account &&
+                        data &&
+                        data.won &&
+                        data.drawer.toLowerCase() === account.toLowerCase()
 
-                    const isWinner = account && data && data.won && data.drawer.toLowerCase() === account.toLowerCase()
+                      return (
+                        <tr>
+                          <th scope='row'>{resultData.length - index}</th>
+                          <td>{shortAddress(data.drawer, 7, 30)}</td>
 
-                    return (
-                      <tr>
-                        <th scope="row">{resultData.length - index}</th>
-                        <td>{shortAddress(data.drawer, 7, 30)}</td>
-
-                        <td> {data.won ? "Yes" : "No"}</td>
-                        <td> {data.won && Number(data.slot) + 1}</td>
-                        <td>{(Number(data.output) / 1000).toFixed(2)}  </td>
-                        <td>
-                          {isWinner && <Button style={{ fontSize: "14px", padding: "0px" }} disabled={loading} onClick={() => onClaim(data.slot)}>
-                            Claim
-                          </Button>}
-                        </td>
-                      </tr>
-                    )
-                  })}
-
-
+                          <td> {data.won ? "Yes" : "No"}</td>
+                          <td> {data.won && Number(data.slot) + 1}</td>
+                          <td>{(Number(data.output) / 1000).toFixed(2)} </td>
+                          <td>
+                            {isWinner && (
+                              <Button
+                                style={{ fontSize: "14px", padding: "0px" }}
+                                disabled={loading}
+                                onClick={() => onClaim(data.slot)}
+                              >
+                                Claim
+                              </Button>
+                            )}
+                          </td>
+                        </tr>
+                      )
+                    })}
                 </tbody>
               </table>
 
-
-              {resultData.length === 0 && <div style={{ padding: 20, textAlign: "center" }}>No records.</div>}
+              {resultData.length === 0 && (
+                <div style={{ padding: 20, textAlign: "center" }}>
+                  No records.
+                </div>
+              )}
             </>
           </ResultDataContainer>
         </ResultDataContainerWrapper>
-
       </Container>
       {selectedNftDetail && (
         <NftDetailContainer>
@@ -362,13 +375,21 @@ const Draw = ({ data, setLuckBoxSelected }) => {
             <br />
             Slot : {Number(selectedNftDetail.id) + 1}
             <br />
-            NFT Name : {selectedNftDetail.tokenURI ? selectedNftDetail.tokenURI.name : ""}
+            NFT Name :{" "}
+            {selectedNftDetail.tokenURI ? selectedNftDetail.tokenURI.name : ""}
             <br />
-            Asset Address : <a href={`https://polygonscan.com/address/${selectedNftDetail.assetAddress}`} target="_blank">{shortAddress(selectedNftDetail.assetAddress)}</a>
+            Asset Address :{" "}
+            <a
+              href={`https://polygonscan.com/address/${selectedNftDetail.assetAddress}`}
+              target='_blank'
+            >
+              {shortAddress(selectedNftDetail.assetAddress)}
+            </a>
             <br />
             Token Id : {selectedNftDetail.tokenId}
             <hr />
-            Chance to get this NFT : {Number(selectedNftDetail.randomnessChance) / 100}%
+            Chance to get this NFT :{" "}
+            {Number(selectedNftDetail.randomnessChance) / 100}%
             {/*             
             <FactoryDetail>
               <Header>Name:</Header>
@@ -377,33 +398,53 @@ const Draw = ({ data, setLuckBoxSelected }) => {
               <hr/>
               hello
             </FactoryDetail> */}
-
-            {data && data.name === "CryptoSharks Eureka" &&
-              (
-                <>
-                  <hr />
-                  <p>The CryptoSharks is a collection of unique Sharks living on Polygon Blockchain.</p>
-                  <p>Floor Price : $22 (27 Nov. 22)</p>
-                  <p>Links : <a href="https://opensea.io/collection/originative-cryptosharks" target="_blank">OpenSea</a>, <a href="https://twitter.com/NFT_Originative" target="_blank">Twitter</a></p>
-                </>
-              )
-
-            }
-
-            { data && data.name === "Chicken Derby Shalala" &&
-            (
+            {data && data.name === "CryptoSharks Eureka" && (
               <>
-              <hr/>
-              <p>Join the most fun and exciting Ethereum-based game where you can own and race your chicken to earn ETH. Brought by the makers of Ganja Farmer.</p>
-              <p>Floor Price : $226 (27 Nov. 22)</p>
-                  <p>Links : <a href="https://opensea.io/collection/chicken-derby" target="_blank">OpenSea</a>, <a href="https://twitter.com/bitlovincom" target="_blank">Twitter</a></p>
+                <hr />
+                <p>
+                  The CryptoSharks is a collection of unique Sharks living on
+                  Polygon Blockchain.
+                </p>
+                <p>Floor Price : $22 (27 Nov. 22)</p>
+                <p>
+                  Links :{" "}
+                  <a
+                    href='https://opensea.io/collection/originative-cryptosharks'
+                    target='_blank'
+                  >
+                    OpenSea
+                  </a>
+                  ,{" "}
+                  <a href='https://twitter.com/NFT_Originative' target='_blank'>
+                    Twitter
+                  </a>
+                </p>
               </>
-            )
-
-            }
-
-
-
+            )}
+            {data && data.name === "Chicken Derby Shalala" && (
+              <>
+                <hr />
+                <p>
+                  Join the most fun and exciting Ethereum-based game where you
+                  can own and race your chicken to earn ETH. Brought by the
+                  makers of Ganja Farmer.
+                </p>
+                <p>Floor Price : $226 (27 Nov. 22)</p>
+                <p>
+                  Links :{" "}
+                  <a
+                    href='https://opensea.io/collection/chicken-derby'
+                    target='_blank'
+                  >
+                    OpenSea
+                  </a>
+                  ,{" "}
+                  <a href='https://twitter.com/bitlovincom' target='_blank'>
+                    Twitter
+                  </a>
+                </p>
+              </>
+            )}
           </ItemContainer>
           {/* <Button style={{ width: "100%" }} disabled={loading || !pendingClaimed} onClick={() => onClaim(selectedNftDetail.id)}>
             Claim
@@ -412,33 +453,35 @@ const Draw = ({ data, setLuckBoxSelected }) => {
         </NftDetailContainer>
       )}
       <DrawContainer>
+        {owner.toLowerCase() === account.toLowerCase() && (
+          <Button onClick={toggleManageSelected}>Manage</Button>
+        )}
         <Button disabled={loading || !account} onClick={onDraw}>
           Draw
         </Button>
-        {!account && <div style={{ textAlign: "center", color: "red" }}>Wallet is not connected</div>}
+        {!account && (
+          <div style={{ textAlign: "center", color: "red" }}>
+            Wallet is not connected
+          </div>
+        )}
         <TicketPrice>Price: {ticketPrice} MATIC</TicketPrice>
         <Steps>
           <u>How To Play</u>
           <ol>
+            <li>Connnect your wallet to Polygon chain</li>
+            <li>Check out hitting chance by clicking one of the NFT</li>
+            <li>Clicking "Draw" button if you are interested</li>
             <li>
-              Connnect your wallet to Polygon chain
+              Waiting about 1 min. for the result to be generated by Chainlink
+              nodes
             </li>
             <li>
-              Check out hitting chance by clicking one of the NFT
-            </li>
-            <li>
-              Clicking "Draw" button if you are interested
-            </li>
-            <li>
-              Waiting about 1 min. for the result to be generated by Chainlink nodes
-            </li>
-            <li>
-              Check out the history panel at the bottom of the screen to see if you get the prize
+              Check out the history panel at the bottom of the screen to see if
+              you get the prize
             </li>
           </ol>
         </Steps>
       </DrawContainer>
-
     </Wrapper>
   )
 }

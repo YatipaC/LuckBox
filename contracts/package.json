@@ -14,7 +14,8 @@
     "@openzeppelin/contracts": "3.4",
     "@openzeppelin/contracts-ethereum-package": "^3.0.0",
     "@openzeppelin/test-helpers": "^0.5.11",
-    "hardhat": "^2.6.8"
+    "hardhat": "^2.6.8",
+    "hardhat-deploy": "^0.9.14"
   },
   "devDependencies": {
     "@nomiclabs/hardhat-ethers": "^2.0.2",

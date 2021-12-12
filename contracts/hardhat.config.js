@@ -1,5 +1,6 @@
 require("dotenv").config()
 
+require("hardhat-deploy")
 require("@nomiclabs/hardhat-etherscan")
 require("@nomiclabs/hardhat-waffle")
 require("hardhat-gas-reporter")
@@ -29,6 +30,15 @@ module.exports = {
         url: process.env.POLYGON_URL,
         blockNumber: 20480699,
       },
+    },
+    polygon: {
+      url: process.env.POLYGON_URL,
+      accounts: [process.env.PRIVATEKEY],
+    },
+  },
+  namedAccounts: {
+    deployer: {
+      default: 0,
     },
   },
   mocha: {
