@@ -16,10 +16,6 @@ import "@openzeppelin/contracts/utils/ReentrancyGuard.sol";
 import "@openzeppelin/contracts/access/Ownable.sol";
 import "@chainlink/contracts/src/v0.6/VRFConsumerBase.sol";
 
-// import "./interfaces/IUniswapV2Router02.sol";
-// import "./interfaces/ILuckbox.sol";
-// import "./utility/LibMath.sol";
-
 contract LuckBox is
   VRFConsumerBase,
   Ownable,
@@ -36,6 +32,8 @@ contract LuckBox is
   // using LibMathUnsigned for SafeMathChainlink;
 
   mapping(bytes32 => address) private requestIdToAddress;
+
+  uint256 private randomNumber;
 
   // for identification purposes
   string public name;
@@ -82,6 +80,17 @@ contract LuckBox is
 
   mapping(uint256 => Result) public result;
 
+  struct ReserveNft {
+    address assetAddress;
+    uint256 randomnessChance;
+    uint256 tokenId;
+    bool is1155;
+  }
+
+  mapping(uint256 => ReserveNft) public reserveQueue;
+  uint256 public firstQueue;
+  uint256 public lastQueue;
+
   uint256 public resultCount;
 
   uint8 public constant MAX_SLOT = 9;
@@ -99,6 +108,13 @@ contract LuckBox is
   event WithdrawnNft(uint8 slotId);
   event Drawn(address indexed drawer, bool won);
   event Claimed(uint8 slotId, address winner);
+  event StackedNft(
+    address assetAddress,
+    uint256 tokenId,
+    uint256 randomness,
+    bool is1155
+  );
+  event Random(address user, uint256 timestamp);
 
   constructor(
     string memory _name,
@@ -114,7 +130,7 @@ contract LuckBox is
     _registerInterface(IERC721Receiver.onERC721Received.selector);
   }
 
-  function draw() public payable nonReentrant returns (bytes32 requestId) {
+  function draw() public payable nonReentrant {
     require(msg.value == ticketPrice, "Payment is not attached");
 
     require(
@@ -122,10 +138,13 @@ contract LuckBox is
       "Insufficient LINK to proceed VRF"
     );
 
-    requestId = requestRandomness(KEY_HASH, FEE);
-    requestIdToAddress[requestId] = msg.sender;
+    uint256 hashRandomNumber = uint256(
+      keccak256(abi.encodePacked(now, msg.sender, randomNumber))
+    );
 
-    emit Draw(msg.sender, requestId);
+    _draw(hashRandomNumber, msg.sender, "0x00");
+
+    emit Draw(msg.sender, "0x00");
   }
 
   // find the current winning rates
@@ -182,7 +201,30 @@ contract LuckBox is
     list[_slotId].randomnessChance = 0;
     list[_slotId].pendingWinnerToClaim = false;
 
+    if (lastQueue >= firstQueue) {
+      ReserveNft memory reserve = dequeue();
+
+      list[_slotId].locked = true;
+      list[_slotId].assetAddress = reserve.assetAddress;
+      list[_slotId].tokenId = reserve.tokenId;
+      list[_slotId].is1155 = reserve.is1155;
+      list[_slotId].randomnessChance = reserve.randomnessChance;
+      list[_slotId].pendingWinnerToClaim = false;
+      list[_slotId].winner = address(0);
+    }
     emit Claimed(_slotId, msg.sender);
+  }
+
+  function random() public {
+    require(
+      IERC20(LINK_TOKEN).balanceOf(address(this)) >= FEE,
+      "Insufficient LINK to proceed VRF"
+    );
+
+    bytes32 requestId = requestRandomness(KEY_HASH, FEE);
+    requestIdToAddress[requestId] = msg.sender;
+
+    emit Random(msg.sender, block.timestamp);
   }
 
   // ONLY OWNER CAN PROCEED
@@ -294,6 +336,41 @@ contract LuckBox is
     emit WithdrawnNft(_slotId);
   }
 
+  function stackNft(
+    address _assetAddress,
+    uint256 _randomness,
+    uint256 _tokenId,
+    bool _is1155
+  ) public {
+    // take the NFT
+    if (_is1155) {
+      IERC1155(_assetAddress).safeTransferFrom(
+        msg.sender,
+        address(this),
+        _tokenId,
+        1,
+        "0x00"
+      );
+    } else {
+      IERC721(_assetAddress).safeTransferFrom(
+        msg.sender,
+        address(this),
+        _tokenId
+      );
+    }
+
+    ReserveNft memory reserve = ReserveNft({
+      assetAddress: _assetAddress,
+      randomnessChance: _randomness,
+      tokenId: _tokenId,
+      is1155: _is1155
+    });
+
+    enqueue(reserve);
+
+    emit StackedNft(_assetAddress, _tokenId, _randomness, _is1155);
+  }
+
   // PRIVATE FUNCTIONS
 
   // callback from Chainlink VRF
@@ -301,8 +378,7 @@ contract LuckBox is
     internal
     override
   {
-    address receiver = requestIdToAddress[requestId];
-    _draw(_randomness, receiver, requestId);
+    randomNumber = _randomness;
   }
 
   function _parseRandomUInt256(uint256 input) internal pure returns (uint256) {
@@ -345,5 +421,25 @@ contract LuckBox is
     resultCount += 1;
 
     emit Drawn(_drawer, won);
+  }
+
+  function enqueue(ReserveNft memory _data) private {
+    lastQueue += 1;
+    reserveQueue[lastQueue] = _data;
+  }
+
+  function dequeue() private returns (ReserveNft memory) {
+    require(lastQueue >= firstQueue); // non-empty queue
+
+    ReserveNft memory data = ReserveNft({
+      assetAddress: reserveQueue[firstQueue].assetAddress,
+      randomnessChance: reserveQueue[firstQueue].randomnessChance,
+      tokenId: reserveQueue[firstQueue].tokenId,
+      is1155: reserveQueue[firstQueue].is1155
+    });
+
+    delete reserveQueue[firstQueue];
+    firstQueue += 1;
+    return data;
   }
 }
