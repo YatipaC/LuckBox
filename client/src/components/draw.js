@@ -453,7 +453,7 @@ const Draw = ({ data, setLuckBoxSelected, toggleManageSelected }) => {
         </NftDetailContainer>
       )}
       <DrawContainer>
-        {owner.toLowerCase() === account.toLowerCase() && (
+        {account && owner.toLowerCase() === account.toLowerCase() && (
           <Button onClick={toggleManageSelected}>Manage</Button>
         )}
         <Button disabled={loading || !account} onClick={onDraw}>

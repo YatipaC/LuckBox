@@ -5,7 +5,7 @@ module.exports = async ({ getNamedAccounts, deployments, network }) => {
 
   await deploy("Factory", {
     from: deployer,
-    args: [],
+    args: [deployer],
     log: true,
   })
 

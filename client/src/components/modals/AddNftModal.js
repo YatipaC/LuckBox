@@ -12,6 +12,8 @@ import {
 import { useWeb3React } from "@web3-react/core"
 import styled, { css } from "styled-components"
 import { useLuckBox } from "../../hooks/useLuckBox"
+import { useERC721 } from "../../hooks/useERC721"
+import { ethers } from "ethers"
 
 const InputGroupContainer = styled.div`
   display: flex;
@@ -75,14 +77,46 @@ function AddNftModal({ toggleModal, modalVisible, boxAddress, slotId }) {
     }
   }
 
+  const [isAssetApprovedToBox, setIsAssetApprovedToBox] = useState(false)
   const { value: randomness, onChange: onRandomnessChange } = useInput("")
   const { value: assetAddress, onChange: onAssetAddressChange } = useInput("")
   const { value: tokenId, onChange: onTokenIdChange } = useInput("")
 
+  const assetAddressContract = useERC721(assetAddress, account, library)
+
+  useEffect(() => {
+    checkAssetAddresApproved()
+  }, [assetAddress])
+
+  const checkAssetAddresApproved = async () => {
+    if (!assetAddressContract || !ethers.utils.isAddress(assetAddress)) return
+    const isApprove = await assetAddressContract.getIsApprovedForAll(boxAddress)
+    setIsAssetApprovedToBox(isApprove)
+  }
+
+  const onApproveAssetToBox = async () => {
+    if (!assetAddressContract || !ethers.utils.isAddress(assetAddress)) return
+    try {
+      setLoading(true)
+      await assetAddressContract.setApproveForAll(boxAddress)
+      setIsAssetApprovedToBox(true)
+    } catch (e) {
+      console.log(e)
+    } finally {
+      setLoading(false)
+    }
+  }
+
   const onDepositNft = async () => {
     try {
       setLoading(true)
-      await depositNft(slotId, randomness, assetAddress, tokenId, tokenType === 1155)
+      await depositNft(
+        slotId,
+        randomness,
+        assetAddress,
+        tokenId,
+        tokenType === 1155
+      )
     } catch (e) {
       console.log(e)
     } finally {
@@ -97,7 +131,7 @@ function AddNftModal({ toggleModal, modalVisible, boxAddress, slotId }) {
         Add Nft
       </ModalHeader>
       <ModalBody>
-        <InputHeader>Slot: {slotId}</InputHeader>
+        <InputHeader>Slot: {slotId + 1}</InputHeader>
         <InputGroupContainer>
           <InputHeader>Random Percent</InputHeader>
           <InputGroup>
@@ -150,9 +184,21 @@ function AddNftModal({ toggleModal, modalVisible, boxAddress, slotId }) {
         </InputGroupContainer>
       </ModalBody>
       <ModalFooter>
-        <Button disabled={loading} color='primary' onClick={onDepositNft}>
-          Add
-        </Button>
+        {!isAssetApprovedToBox ? (
+          <Button
+            disabled={
+              !isAssetApprovedToBox && !ethers.utils.isAddress(assetAddress)
+            }
+            color='primary'
+            onClick={onApproveAssetToBox}
+          >
+            Approve
+          </Button>
+        ) : (
+          <Button disabled={loading} color='primary' onClick={onDepositNft}>
+            Add
+          </Button>
+        )}
         <Button color='secondary' onClick={toggleModal}>
           Close
         </Button>
