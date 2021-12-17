@@ -91,6 +91,7 @@ const CreateNewBox = ({ toggleCreateLuckBox }) => {
 const Assets = ({ setLuckBoxSelected, toggleCreateLuckBox }) => {
   const { account, library } = useWeb3React()
   const { allBoxesDetail } = useContext(FactoryContext)
+  console.log(allBoxesDetail)
 
   const [counter, setCounter] = useState(0)
 

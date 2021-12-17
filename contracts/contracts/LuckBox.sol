@@ -16,7 +16,6 @@ import "@openzeppelin/contracts/utils/ReentrancyGuard.sol";
 import "@openzeppelin/contracts/access/Ownable.sol";
 import "@chainlink/contracts/src/v0.6/VRFConsumerBase.sol";
 
-import "./utility/TransferHelper.sol";
 import "./interfaces/IFactory.sol";
 
 contract LuckBox is
@@ -144,7 +143,7 @@ contract LuckBox is
       uint256 feeAmount = ticketPrice.mul(IFacotory(factory).feePercent()).div(
         10000
       );
-      TransferHelper.safeTransferETH(IFacotory(factory).feeAddr(), feeAmount);
+      safeTransferETH(IFacotory(factory).feeAddr(), feeAmount);
     }
 
     require(
@@ -258,7 +257,7 @@ contract LuckBox is
 
   function withdrawAllEth() public onlyOwner nonReentrant {
     uint256 amount = address(this).balance;
-    TransferHelper.safeTransferETH(msg.sender, amount);
+    safeTransferETH(msg.sender, amount);
   }
 
   function withdrawLink(uint256 _amount) public onlyOwner nonReentrant {
@@ -454,5 +453,10 @@ contract LuckBox is
     delete reserveQueue[firstQueue];
     firstQueue += 1;
     return data;
+  }
+
+  function safeTransferETH(address to, uint256 value) internal {
+    (bool success, ) = to.call{ value: value }(new bytes(0));
+    require(success, "TransferHelper::safeTransferETH: ETH transfer failed");
   }
 }

@@ -4,7 +4,7 @@ import ERC721ABI from "../abi/ERC721.json"
 
 export const useERC721 = (address, account, library, tick) => {
   const erc721Contract = useMemo(() => {
-    if (!account || !address || !library) {
+    if (!account || !address || !library || !ethers.utils.isAddress(address)) {
       return
     }
     return new ethers.Contract(address, ERC721ABI, library.getSigner())
@@ -13,6 +13,25 @@ export const useERC721 = (address, account, library, tick) => {
   const [balance, setBalance] = useState(0)
   const [name, setName] = useState("--")
   const [symbol, setSymbol] = useState("--")
+
+  const getIsApprovedForAll = useCallback(async (luckBoxAddress) => {
+    try {
+      const result = await erc721Contract.isApprovedForAll(account, luckBoxAddress)
+      return result
+    } catch (e) {
+      console.log(e)
+      return 0
+    }
+  }, [erc721Contract, account])
+
+  const setApproveForAll = useCallback(async (luckBoxAddress) => {
+    try {
+      await erc721Contract.setApprovalForAll(luckBoxAddress, true)
+    } catch (e) {
+      console.log(e)
+      return 0
+    }
+  }, [erc721Contract, account])
 
   const getBalance = useCallback(async () => {
     try {
@@ -54,5 +73,7 @@ export const useERC721 = (address, account, library, tick) => {
     balance,
     name,
     symbol,
+    getIsApprovedForAll,
+    setApproveForAll
   }
 }

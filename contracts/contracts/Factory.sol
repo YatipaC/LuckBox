@@ -66,7 +66,7 @@ contract Factory is ReentrancyGuard, Ownable {
         require(_feeAddr != address(0), "Address zero !");
         feeAddr = _feeAddr;
 
-        emit setFeeAddr(feeAddr);
+        emit SetFeeAddr(feeAddr);
     }
 
     function setFee(uint256 _feePercent) public onlyOwner {
