@@ -16,6 +16,9 @@ import "@openzeppelin/contracts/utils/ReentrancyGuard.sol";
 import "@openzeppelin/contracts/access/Ownable.sol";
 import "@chainlink/contracts/src/v0.6/VRFConsumerBase.sol";
 
+import "./utility/TransferHelper.sol";
+import "./interfaces/IFactory.sol";
+
 contract LuckBox is
   VRFConsumerBase,
   Ownable,
@@ -95,6 +98,8 @@ contract LuckBox is
 
   uint8 public constant MAX_SLOT = 9;
 
+  address public factory;
+
   event UpdatedTicketPrice(uint256 ticketPrice);
   event Draw(address indexed drawer, bytes32 requestId);
   event ClaimNft(address indexed receiver, address factory, address tokenId);
@@ -119,19 +124,28 @@ contract LuckBox is
   constructor(
     string memory _name,
     string memory _symbol,
-    uint256 _ticketPrice
+    uint256 _ticketPrice,
+    address _factory
   ) public VRFConsumerBase(VRF_COORDINATOR, LINK_TOKEN) {
     require(_ticketPrice != 0, "Invalid ticket price");
 
     name = _name;
     symbol = _symbol;
     ticketPrice = _ticketPrice;
+    factory = _factory;
 
     _registerInterface(IERC721Receiver.onERC721Received.selector);
   }
 
   function draw() public payable nonReentrant {
     require(msg.value == ticketPrice, "Payment is not attached");
+
+    if (factory != address(0)) {
+      uint256 feeAmount = ticketPrice.mul(IFacotory(factory).feePercent()).div(
+        10000
+      );
+      TransferHelper.safeTransferETH(IFacotory(factory).feeAddr(), feeAmount);
+    }
 
     require(
       IERC20(LINK_TOKEN).balanceOf(address(this)) >= FEE,
@@ -244,8 +258,7 @@ contract LuckBox is
 
   function withdrawAllEth() public onlyOwner nonReentrant {
     uint256 amount = address(this).balance;
-    (bool success, ) = payable(msg.sender).call{ value: amount }("");
-    require(success, "Failed to send Ether");
+    TransferHelper.safeTransferETH(msg.sender, amount);
   }
 
   function withdrawLink(uint256 _amount) public onlyOwner nonReentrant {

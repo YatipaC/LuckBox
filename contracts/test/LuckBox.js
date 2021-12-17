@@ -22,13 +22,15 @@ describe("LuckBox", () => {
     luckBox = await LuckBox.deploy(
       "My Luckbox",
       "LUCKBOX",
-      toEther(0.1) // 0.1 MATIC
+      toEther(0.1), // 0.1 MATIC
+      ethers.constants.AddressZero
     )
 
     luckBox1155 = await LuckBox1155.deploy(
       "My Luckbox",
       "LUCKBOX",
-      toEther(0.1) // 0.1 MATIC
+      toEther(0.1), // 0.1 MATIC
+      ethers.constants.AddressZero
     )
 
     const MockERC721 = await ethers.getContractFactory("MockERC721")

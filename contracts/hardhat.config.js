@@ -26,6 +26,7 @@ module.exports = {
   solidity: "0.6.12",
   networks: {
     hardhat: {
+      allowUnlimitedContractSize: true,
       forking: {
         url: process.env.POLYGON_URL,
         blockNumber: 20480699,
