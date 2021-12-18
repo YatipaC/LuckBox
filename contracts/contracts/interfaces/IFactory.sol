@@ -2,8 +2,8 @@
 
 pragma solidity 0.6.12;
 
-interface IFacotory {
-  function feeAddr() external pure returns (address);
+interface IFactory {
+  function devAddr() external pure returns (address);
 
   function feePercent() external pure returns (uint256);
 
