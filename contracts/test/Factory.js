@@ -15,7 +15,7 @@ describe("Factory", () => {
 
         const Factory = await ethers.getContractFactory("Factory");
 
-        factory = await Factory.deploy()
+        factory = await Factory.deploy(admin.address)
 
     })
 

@@ -10,7 +10,6 @@ import "@openzeppelin/contracts/token/ERC721/IERC721Receiver.sol";
 import "@openzeppelin/contracts/introspection/ERC165.sol";
 import "@openzeppelin/contracts/token/ERC1155/IERC1155.sol";
 import "@openzeppelin/contracts/token/ERC1155/ERC1155Holder.sol";
-import "@openzeppelin/contracts/token/ERC1155/IERC1155Receiver.sol";
 
 import "@openzeppelin/contracts/utils/ReentrancyGuard.sol";
 import "@openzeppelin/contracts/access/Ownable.sol";
@@ -25,13 +24,10 @@ contract LuckBox is
   IERC721Receiver,
   ERC165,
   ERC721Holder,
-  IERC1155Receiver,
   ERC1155Holder
 {
   using SafeMathChainlink for uint256;
   using SafeERC20 for IERC20;
-  // using LibMathSigned for int256;
-  // using LibMathUnsigned for SafeMathChainlink;
 
   mapping(bytes32 => address) private requestIdToAddress;
 
@@ -43,7 +39,7 @@ contract LuckBox is
 
   uint256 public ticketPrice;
 
-  // Chainlink
+  // Chainlink constants
   address public constant VRF_COORDINATOR =
     0x3d2341ADb2D31f1c5530cDC622016af293177AE0;
   address public constant LINK_TOKEN =
@@ -52,13 +48,7 @@ contract LuckBox is
     0xf86195cf7690c55907b2b611ebb7343a6f649bff128701cc542f0569e2c549da;
   uint256 public constant FEE = 100000000000000; // 0.0001 LINK
 
-  // Quickswap
-
-  // IUniswapV2Router02 public constant ROUTER =
-  //     IUniswapV2Router02(0xa5E0829CaCEd8fFDD4De3c43696c57F7D7A678ff);
-  // address public constant USDC_TOKEN =
-  //     0x2791Bca1f2de4661ED88A30C99A7a9449Aa84174;
-
+  // Slot info
   struct Slot {
     address assetAddress;
     uint256 tokenId;
@@ -71,6 +61,7 @@ contract LuckBox is
 
   mapping(uint8 => Slot) public list;
 
+  // History data
   struct Result {
     bytes32 requestId;
     address drawer;
@@ -81,7 +72,9 @@ contract LuckBox is
   }
 
   mapping(uint256 => Result) public result;
+  uint256 public resultCount;
 
+  // Reserve slots
   struct ReserveNft {
     address assetAddress;
     uint256 randomnessChance;
@@ -93,10 +86,9 @@ contract LuckBox is
   uint256 public firstQueue;
   uint256 public lastQueue;
 
-  uint256 public resultCount;
-
   uint8 public constant MAX_SLOT = 9;
 
+  // factory address
   address public factory;
 
   event UpdatedTicketPrice(uint256 ticketPrice);
@@ -136,14 +128,15 @@ contract LuckBox is
     _registerInterface(IERC721Receiver.onERC721Received.selector);
   }
 
+  // pays $MATIC to draws a gacha
   function draw() public payable nonReentrant {
     require(msg.value == ticketPrice, "Payment is not attached");
 
     if (factory != address(0)) {
-      uint256 feeAmount = ticketPrice.mul(IFacotory(factory).feePercent()).div(
+      uint256 feeAmount = ticketPrice.mul(IFactory(factory).feePercent()).div(
         10000
       );
-      safeTransferETH(IFacotory(factory).feeAddr(), feeAmount);
+      _safeTransferETH(IFactory(factory).devAddr(), feeAmount);
     }
 
     require(
@@ -177,14 +170,17 @@ contract LuckBox is
     return _parseRandomUInt256(input);
   }
 
+  // check total ETH locked in the contract
   function totalEth() public view returns (uint256) {
     return address(this).balance;
   }
 
+  // check total LINK locked in the contract
   function totalLink() public view returns (uint256) {
     return IERC20(LINK_TOKEN).balanceOf(address(this));
   }
 
+  // make a claim for an eligible winner
   function claimNft(uint8 _slotId) public {
     require(MAX_SLOT > _slotId, "Invalid slot ID");
     require(list[_slotId].locked == true, "The slot is empty");
@@ -215,7 +211,7 @@ contract LuckBox is
     list[_slotId].pendingWinnerToClaim = false;
 
     if (lastQueue >= firstQueue) {
-      ReserveNft memory reserve = dequeue();
+      ReserveNft memory reserve = _dequeue();
 
       list[_slotId].locked = true;
       list[_slotId].assetAddress = reserve.assetAddress;
@@ -257,7 +253,7 @@ contract LuckBox is
 
   function withdrawAllEth() public onlyOwner nonReentrant {
     uint256 amount = address(this).balance;
-    safeTransferETH(msg.sender, amount);
+    _safeTransferETH(msg.sender, amount);
   }
 
   function withdrawLink(uint256 _amount) public onlyOwner nonReentrant {
@@ -378,7 +374,7 @@ contract LuckBox is
       is1155: _is1155
     });
 
-    enqueue(reserve);
+    _enqueue(reserve);
 
     emit StackedNft(_assetAddress, _tokenId, _randomness, _is1155);
   }
@@ -435,12 +431,12 @@ contract LuckBox is
     emit Drawn(_drawer, won);
   }
 
-  function enqueue(ReserveNft memory _data) private {
+  function _enqueue(ReserveNft memory _data) private {
     lastQueue += 1;
     reserveQueue[lastQueue] = _data;
   }
 
-  function dequeue() private returns (ReserveNft memory) {
+  function _dequeue() private returns (ReserveNft memory) {
     require(lastQueue >= firstQueue); // non-empty queue
 
     ReserveNft memory data = ReserveNft({
@@ -455,7 +451,7 @@ contract LuckBox is
     return data;
   }
 
-  function safeTransferETH(address to, uint256 value) internal {
+  function _safeTransferETH(address to, uint256 value) internal {
     (bool success, ) = to.call{ value: value }(new bytes(0));
     require(success, "TransferHelper::safeTransferETH: ETH transfer failed");
   }

@@ -24,17 +24,17 @@ contract Factory is ReentrancyGuard, Ownable {
     uint256 public totalBoxes;
 
     // Fee section
-    address public feeAddr;
-    uint256 public feePercent;
+    address public devAddr;
+    uint256 public feePercent = 300; // 3%
     uint256 public constant MAX_FEE = 1000; // 10%
 
     event LuckboxCreated(address indexed _address);
     event SetFee(uint256 _fee);
-    event SetFeeAddr(address _feeAddr);
+    event SetDevAddr(address _devAddr);
 
-    constructor(address _feeAddr) public {
-        require(_feeAddr != address(0), "Address zero");
-        feeAddr = _feeAddr;
+    constructor(address _devAddr) public {
+        require(_devAddr != address(0), "Address is zero");
+        devAddr = _devAddr;
     }
 
     function createLuckbox(
@@ -62,11 +62,11 @@ contract Factory is ReentrancyGuard, Ownable {
         emit LuckboxCreated(newLuckbox);
     }
 
-    function setFeeAddr(address _feeAddr) public onlyOwner {
-        require(_feeAddr != address(0), "Address zero !");
-        feeAddr = _feeAddr;
+    function setDevAddr(address _devAddr) public onlyOwner {
+        require(_devAddr != address(0), "Address zero !");
+        devAddr = _devAddr;
 
-        emit SetFeeAddr(feeAddr);
+        emit SetDevAddr(devAddr);
     }
 
     function setFee(uint256 _feePercent) public onlyOwner {
