@@ -2,6 +2,7 @@ import React, { useState, useEffect, useCallback, useContext } from "react"
 import { Button, Modal, ModalHeader, ModalBody, ModalFooter } from "reactstrap"
 import { useWeb3React } from "@web3-react/core"
 import styled from "styled-components"
+import {  toast } from 'react-toastify';
 import { Connectors } from "../../connectors"
 import useEagerConnect from "../../hooks/useEagerConnect"
 import useInactiveListener from "../../hooks/useInactiveListener"
@@ -60,13 +61,24 @@ function WalletsModal({ toggleWalletConnect, walletLoginVisible }) {
   useEffect(() => {
     if (error && error.name === "UnsupportedChainIdError") {
       //   toastr.warning("Unsupported Network", "Please switch to Polygon Mainnet")
-      alert("Please switch to Polygon Mainnet")
+      // alert("Please switch to Polygon Mainnet")
+
+      toast.warn('Please switch to Polygon!', {
+        position: "top-right",
+        autoClose: 5000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+      });
+
     }
   }, [error])
 
   return (
     <Modal isOpen={walletLoginVisible} toggle={toggleWalletConnect}>
-      <ModalHeader style={{color: "#000"}} toggle={toggleWalletConnect}>
+      <ModalHeader style={{ color: "#000" }} toggle={toggleWalletConnect}>
         Choose Wallet Provider
       </ModalHeader>
       <ModalBody>
