@@ -30,7 +30,7 @@ function CreateLuckBoxModal({ toggleModal, modalVisible }) {
   const { account, library } = useWeb3React()
   const { createLuckBox } = useFactory(FACTORY, account, library)
   const [loading, setLoading] = useState(false)
-	const useInput = (initialState) => {
+  const useInput = (initialState) => {
     const [value, setValue] = useState(initialState)
     function handleInput(e) {
       setValue(e.target.value)
@@ -40,9 +40,9 @@ function CreateLuckBoxModal({ toggleModal, modalVisible }) {
       onChange: handleInput,
     }
   }
-	const { value: name, onChange: onNameChange } = useInput("")
-	const { value: symbol, onChange: onSymbolChange } = useInput("")
-	const { value: ticketPrice, onChange: onTicketPriceChange } = useInput("")
+  const { value: name, onChange: onNameChange } = useInput("")
+  const { value: symbol, onChange: onSymbolChange } = useInput("")
+  const { value: ticketPrice, onChange: onTicketPriceChange } = useInput("")
 
   const onCreateLuckBox = async () => {
     try {
@@ -59,7 +59,7 @@ function CreateLuckBoxModal({ toggleModal, modalVisible }) {
   return (
     <Modal isOpen={modalVisible} toggle={toggleModal}>
       <ModalHeader style={{ color: "#000" }} toggle={toggleModal}>
-        Crate Luck Box NFTs
+        Create Your Collection
       </ModalHeader>
       <ModalBody>
         <InputGroupContainer>
@@ -75,17 +75,24 @@ function CreateLuckBoxModal({ toggleModal, modalVisible }) {
           <InputGroup>
             <Input
               value={ticketPrice}
-							onChange={onTicketPriceChange}
+              onChange={onTicketPriceChange}
               type='number'
               placeholder='Ticket Price'
             />
             <InputGroupText>MATIC</InputGroupText>
           </InputGroup>
         </InputGroupContainer>
+
+        {!account && (
+          <div style={{ textAlign: "center", color: "red" }}>
+            Connect your wallet first
+          </div>
+        )}
+
       </ModalBody>
       <ModalFooter>
-        <Button disabled={loading} color='primary' onClick={onCreateLuckBox}>
-          Create
+        <Button disabled={loading || !account} color='primary' onClick={onCreateLuckBox}>
+          Proceed
         </Button>
         <Button color='secondary' onClick={toggleModal}>
           Close
