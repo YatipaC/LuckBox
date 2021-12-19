@@ -80,6 +80,7 @@ function App() {
               setLuckBoxSelected={setLuckBoxSelected}
             />
             <Info />
+
             <Footer />
           </>
         )}
