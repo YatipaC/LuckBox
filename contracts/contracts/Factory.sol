@@ -18,6 +18,7 @@ contract Factory is ReentrancyGuard, Ownable {
         string symbol;
         address owner;
         address contractAddress;
+        bool banned;
     }
 
     Box[] public boxes;
@@ -53,7 +54,8 @@ contract Factory is ReentrancyGuard, Ownable {
                 name: name,
                 symbol: symbol,
                 owner: msg.sender,
-                contractAddress: newLuckbox
+                contractAddress: newLuckbox,
+                banned : false
             })
         );
 
@@ -62,18 +64,22 @@ contract Factory is ReentrancyGuard, Ownable {
         emit LuckboxCreated(newLuckbox);
     }
 
-    function setDevAddr(address _devAddr) public onlyOwner {
+    function setDevAddr(address _devAddr) public onlyOwner nonReentrant {
         require(_devAddr != address(0), "Address zero !");
         devAddr = _devAddr;
 
         emit SetDevAddr(devAddr);
     }
 
-    function setFee(uint256 _feePercent) public onlyOwner {
+    function setFee(uint256 _feePercent) public onlyOwner nonReentrant {
         require(_feePercent <= MAX_FEE, "Below MAX_FEE Please");
         feePercent = _feePercent;
 
         emit SetFee(feePercent);
+    }
+
+    function setBan(uint256 _id, bool _isBan) public onlyOwner nonReentrant {
+        boxes[_id].banned = _isBan;
     }
 
     function getBoxOwner(uint256 _id) public view returns (address) {
@@ -90,6 +96,10 @@ contract Factory is ReentrancyGuard, Ownable {
 
     function getBoxSymbol(uint256 _id) public view returns (string memory) {
         return boxes[_id].symbol;
+    }
+
+    function isBanned(uint256 _id ) public view returns (bool) {
+        return boxes[_id].banned;
     }
 
 }

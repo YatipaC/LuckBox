@@ -6,12 +6,13 @@ let factory
 let admin
 let alice
 let bob
+let charlie
 
 describe("Factory", () => {
 
     before(async () => {
 
-        [admin, alice, bob] = await ethers.getSigners();
+        [admin, alice, bob, charlie] = await ethers.getSigners();
 
         const Factory = await ethers.getContractFactory("Factory");
 
@@ -45,6 +46,18 @@ describe("Factory", () => {
         expect( await factory.getBoxName(1)).to.equal( "BOB BOX" )
         expect( await factory.getBoxSymbol(1)).to.equal( "BOB" )
 
+    })
+
+    it("Bans Charlie's box", async () => {
+
+        await factory.connect(charlie).createLuckbox("CHARLIE BOX", "CHARLIE", 1)
+
+        expect( await factory.totalBoxes() ).to.equal(3)
+        expect( await factory.isBanned(2) ).to.equal( false )
+
+        await factory.connect(admin).setBan(2, true)
+
+        expect( await factory.isBanned(2) ).to.equal( true )
     })
 
 })

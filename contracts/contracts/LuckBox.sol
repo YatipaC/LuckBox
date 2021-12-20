@@ -110,7 +110,7 @@ contract LuckBox is
     uint256 randomness,
     bool is1155
   );
-  event Random(address user, uint256 timestamp);
+  event RequestedNonce(address user, uint256 timestamp);
 
   constructor(
     string memory _name,
@@ -224,7 +224,8 @@ contract LuckBox is
     emit Claimed(_slotId, msg.sender);
   }
 
-  function random() public {
+  // everybody can request a new nonce to Chainlink VRF
+  function requestNonce() public nonReentrant {
     require(
       IERC20(LINK_TOKEN).balanceOf(address(this)) >= FEE,
       "Insufficient LINK to proceed VRF"
@@ -233,7 +234,7 @@ contract LuckBox is
     bytes32 requestId = requestRandomness(KEY_HASH, FEE);
     requestIdToAddress[requestId] = msg.sender;
 
-    emit Random(msg.sender, block.timestamp);
+    emit RequestedNonce(msg.sender, block.timestamp);
   }
 
   // ONLY OWNER CAN PROCEED
