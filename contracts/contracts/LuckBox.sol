@@ -18,7 +18,6 @@ import "@chainlink/contracts/src/v0.6/VRFConsumerBase.sol";
 import "./interfaces/IFactory.sol";
 
 contract LuckBox is
-  VRFConsumerBase,
   Ownable,
   ReentrancyGuard,
   IERC721Receiver,
@@ -29,24 +28,11 @@ contract LuckBox is
   using SafeMathChainlink for uint256;
   using SafeERC20 for IERC20;
 
-  mapping(bytes32 => address) private requestIdToAddress;
-
-  uint256 private randomNumber;
-
   // for identification purposes
   string public name;
   string public symbol;
 
   uint256 public ticketPrice;
-
-  // Chainlink constants
-  address public constant VRF_COORDINATOR =
-    0x3d2341ADb2D31f1c5530cDC622016af293177AE0;
-  address public constant LINK_TOKEN =
-    0xb0897686c545045aFc77CF20eC7A532E3120E0F1;
-  bytes32 public constant KEY_HASH =
-    0xf86195cf7690c55907b2b611ebb7343a6f649bff128701cc542f0569e2c549da;
-  uint256 public constant FEE = 100000000000000; // 0.0001 LINK
 
   // Slot info
   struct Slot {
@@ -89,7 +75,7 @@ contract LuckBox is
   uint8 public constant MAX_SLOT = 9;
 
   // factory address
-  address public factory;
+  IFactory public factory;
 
   event UpdatedTicketPrice(uint256 ticketPrice);
   event Draw(address indexed drawer, bytes32 requestId);
@@ -110,20 +96,20 @@ contract LuckBox is
     uint256 randomness,
     bool is1155
   );
-  event RequestedNonce(address user, uint256 timestamp);
+  
 
   constructor(
     string memory _name,
     string memory _symbol,
     uint256 _ticketPrice,
     address _factory
-  ) public VRFConsumerBase(VRF_COORDINATOR, LINK_TOKEN) {
+  ) public {
     require(_ticketPrice != 0, "Invalid ticket price");
 
     name = _name;
     symbol = _symbol;
     ticketPrice = _ticketPrice;
-    factory = _factory;
+    factory = IFactory(_factory);
 
     _registerInterface(IERC721Receiver.onERC721Received.selector);
   }
@@ -132,20 +118,20 @@ contract LuckBox is
   function draw() public payable nonReentrant {
     require(msg.value == ticketPrice, "Payment is not attached");
 
-    if (factory != address(0)) {
-      uint256 feeAmount = ticketPrice.mul(IFactory(factory).feePercent()).div(
+    if (address(factory) != address(0)) {
+      uint256 feeAmount = ticketPrice.mul(factory.feePercent()).div(
         10000
       );
-      _safeTransferETH(IFactory(factory).devAddr(), feeAmount);
+      _safeTransferETH(factory.devAddr(), feeAmount);
     }
 
-    require(
-      IERC20(LINK_TOKEN).balanceOf(address(this)) >= FEE,
-      "Insufficient LINK to proceed VRF"
-    );
+    // require(
+    //   IERC20(LINK_TOKEN).balanceOf(address(this)) >= FEE,
+    //   "Insufficient LINK to proceed VRF"
+    // );
 
     uint256 hashRandomNumber = uint256(
-      keccak256(abi.encodePacked(now, msg.sender, randomNumber))
+      keccak256(abi.encodePacked(now, msg.sender, factory.randomNonce(), address(this)))
     );
 
     _draw(hashRandomNumber, msg.sender, "0x00");
@@ -175,10 +161,6 @@ contract LuckBox is
     return address(this).balance;
   }
 
-  // check total LINK locked in the contract
-  function totalLink() public view returns (uint256) {
-    return IERC20(LINK_TOKEN).balanceOf(address(this));
-  }
 
   // make a claim for an eligible winner
   function claimNft(uint8 _slotId) public {
@@ -224,19 +206,6 @@ contract LuckBox is
     emit Claimed(_slotId, msg.sender);
   }
 
-  // everybody can request a new nonce to Chainlink VRF
-  function requestNonce() public nonReentrant {
-    require(
-      IERC20(LINK_TOKEN).balanceOf(address(this)) >= FEE,
-      "Insufficient LINK to proceed VRF"
-    );
-
-    bytes32 requestId = requestRandomness(KEY_HASH, FEE);
-    requestIdToAddress[requestId] = msg.sender;
-
-    emit RequestedNonce(msg.sender, block.timestamp);
-  }
-
   // ONLY OWNER CAN PROCEED
 
   // for local testing
@@ -249,6 +218,13 @@ contract LuckBox is
   {
     require(msg.value == ticketPrice, "Payment is not attached");
 
+    if (address(factory) != address(0)) {
+      uint256 feeAmount = ticketPrice.mul(factory.feePercent()).div(
+        10000
+      );
+      _safeTransferETH(factory.devAddr(), feeAmount);
+    }
+
     _draw(_randomNumber, msg.sender, "0x00");
   }
 
@@ -257,9 +233,9 @@ contract LuckBox is
     _safeTransferETH(msg.sender, amount);
   }
 
-  function withdrawLink(uint256 _amount) public onlyOwner nonReentrant {
-    IERC20(LINK_TOKEN).safeTransfer(msg.sender, _amount);
-  }
+  // function withdrawLink(uint256 _amount) public onlyOwner nonReentrant {
+  //   IERC20(LINK_TOKEN).safeTransfer(msg.sender, _amount);
+  // }
 
   function setTicketPrice(uint256 _ticketPrice) public onlyOwner nonReentrant {
     require(_ticketPrice != 0, "Invalid ticket price");
@@ -381,14 +357,6 @@ contract LuckBox is
   }
 
   // PRIVATE FUNCTIONS
-
-  // callback from Chainlink VRF
-  function fulfillRandomness(bytes32 requestId, uint256 _randomness)
-    internal
-    override
-  {
-    randomNumber = _randomness;
-  }
 
   function _parseRandomUInt256(uint256 input) internal pure returns (uint256) {
     return input.mod(10000);
