@@ -4,8 +4,10 @@ pragma solidity 0.6.12;
 
 import "@openzeppelin/contracts/utils/ReentrancyGuard.sol";
 import "@openzeppelin/contracts/access/Ownable.sol";
-
+import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
+import "@openzeppelin/contracts/token/ERC20/SafeERC20.sol";
 import "./LuckBox.sol";
+
 // import "./interfaces/ILuckbox.sol";
 
 /**
@@ -13,6 +15,8 @@ import "./LuckBox.sol";
  */
 
 contract Factory is ReentrancyGuard, Ownable {
+    using SafeERC20 for IERC20;
+
     struct Box {
         string name;
         string symbol;
@@ -28,6 +32,15 @@ contract Factory is ReentrancyGuard, Ownable {
     address public devAddr;
     uint256 public feePercent = 300; // 3%
     uint256 public constant MAX_FEE = 1000; // 10%
+
+    // Chainlink constants on Polygon
+    address public constant VRF_COORDINATOR =
+        0x3d2341ADb2D31f1c5530cDC622016af293177AE0;
+    address public constant LINK_TOKEN =
+        0xb0897686c545045aFc77CF20eC7A532E3120E0F1;
+    bytes32 public constant KEY_HASH =
+        0xf86195cf7690c55907b2b611ebb7343a6f649bff128701cc542f0569e2c549da;
+    uint256 public constant FEE = 100000000000000; // 0.0001 LINK
 
     event LuckboxCreated(address indexed _address);
     event SetFee(uint256 _fee);
@@ -55,7 +68,7 @@ contract Factory is ReentrancyGuard, Ownable {
                 symbol: symbol,
                 owner: msg.sender,
                 contractAddress: newLuckbox,
-                banned : false
+                banned: false
             })
         );
 
@@ -82,9 +95,17 @@ contract Factory is ReentrancyGuard, Ownable {
         boxes[_id].banned = _isBan;
     }
 
+    function withdrawLink(uint256 _amount) public onlyOwner nonReentrant {
+        IERC20(LINK_TOKEN).safeTransfer(msg.sender, _amount);
+    }
+
+    function totalLink() public view returns (uint256) {
+        return IERC20(LINK_TOKEN).balanceOf(address(this));
+    }
+
     function getBoxOwner(uint256 _id) public view returns (address) {
         return boxes[_id].owner;
-    } 
+    }
 
     function getBoxContractAddress(uint256 _id) public view returns (address) {
         return boxes[_id].contractAddress;
@@ -98,7 +119,7 @@ contract Factory is ReentrancyGuard, Ownable {
         return boxes[_id].symbol;
     }
 
-    function isBanned(uint256 _id ) public view returns (bool) {
+    function isBanned(uint256 _id) public view returns (bool) {
         return boxes[_id].banned;
     }
 

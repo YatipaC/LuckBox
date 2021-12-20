@@ -282,4 +282,7 @@ describe("LuckBox", () => {
       expect(slotData.pendingWinnerToClaim).to.equal(false)
     }
   })
+
+  
+
 })
