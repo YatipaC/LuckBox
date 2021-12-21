@@ -49,7 +49,7 @@ function CongratModal({ toggleModal, modalVisible, drawData, nftList }) {
   return (
     <Modal isOpen={modalVisible} toggle={toggleModal}>
       <ModalHeader style={{ color: "#000" }} toggle={toggleModal}>
-        Drawing Result
+        { !drawData ? "Your result is being processed" : "Your result is finally here" }
       </ModalHeader>
       <ModalBody>
         <ContentContainer>
@@ -57,25 +57,25 @@ function CongratModal({ toggleModal, modalVisible, drawData, nftList }) {
             <FadeLoader height='15' width='5' radius='2' margin='2' />
           ) : drawData.isWon ? (
             <>
-              <Header>🎉🎉 You are the Winner 🎉🎉</Header>
+              <Header>🎉 Congrats! You received NFT 🎉</Header>
               <img width='128' height='128' src={winnerNft.tokenURI.image} />
               <Link
                 href={`https://polygonscan.com/tx/${drawData.tx.hash}`}
                 target='_blank'
               >
-                Check on polygon scan
+                View Your Transaction
               </Link>
             </>
           ) : (
             <>
-              <Header>😭 You are not win the prize 😭</Header>
-              <SubHeader onClick={toggleModal}>You can try again</SubHeader>
+              <Header>😭 You did not receive any NFT 😭</Header>
+              <SubHeader onClick={toggleModal}>Please try again</SubHeader>
               <Link
                 href={`https://polygonscan.com/tx/${drawData.tx.hash}`}
                 target='_blank'
               >
-                Check on polygon scan
-              </Link>
+                View Your Transaction
+              </Link> 
             </>
           )}
         </ContentContainer>
