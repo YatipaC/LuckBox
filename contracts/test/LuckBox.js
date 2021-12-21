@@ -257,32 +257,27 @@ describe("LuckBox", () => {
     ]
 
     for (let random of randoms) {
-      await luckBox.forceDraw(ethers.BigNumber.from(random), {
-        value: toEther(0.1),
-      })
+      await expect(
+        await luckBox.forceDraw(ethers.BigNumber.from(random), {
+          value: toEther(0.1),
+        })
+      ).to.emit(luckBox, "Drawn")
     }
 
     // should able to claim 5 NFTs
     for (let id of tokenIds) {
-      const slotData = await luckBox.list(id)
-
+      const ownerAddress = await erc721.ownerOf(id)
       if ([0, 2, 3, 4, 6].indexOf(id) !== -1) {
-        expect(slotData[5]).to.equal(true)
-        expect(slotData[6]).to.equal(admin.address)
-
-        // then claim it
-        await luckBox.claimNft(id)
+        expect(ownerAddress).to.equal(admin.address)
       } else {
-        expect(slotData[5]).to.equal(false)
+        expect(ownerAddress).to.equal(luckBox.address)
       }
     }
 
     for (let id of tokenIds) {
       const slotData = await luckBox.list(id)
       expect(slotData.pendingWinnerToClaim).to.equal(false)
+      expect(slotData.winner).to.equal(ethers.constants.AddressZero)
     }
   })
-
-  
-
 })

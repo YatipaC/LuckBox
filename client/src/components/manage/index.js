@@ -142,7 +142,6 @@ const Manage = ({ data, toggleManageSelected }) => {
     ticketPrice,
     boxAddress,
     totalEth,
-    totalLink,
   } = data
   const { withdrawEth, withdrawNft } = useLuckBox(boxAddress, account, library)
 	console.log(boxAddress)
@@ -271,7 +270,6 @@ const Manage = ({ data, toggleManageSelected }) => {
             Withdraw
           </Button>
         </ItemContainer>
-        <ItemContainer>Link Balance: {totalLink} LINK </ItemContainer>
       </NftDetailContainer>
       <DrawContainer>
         {selectedNftDetail && Object.keys(selectedNftDetail).length === 1 && (

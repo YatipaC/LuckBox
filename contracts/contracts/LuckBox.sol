@@ -88,7 +88,12 @@ contract LuckBox is
     uint256 randomness
   );
   event WithdrawnNft(uint8 slotId);
-  event Drawn(address indexed drawer, bool won);
+  event Drawn(
+    address indexed drawer,
+    bool won,
+    address assetAddress,
+    uint256 tokenId
+  );
   event Claimed(uint8 slotId, address winner);
   event StackedNft(
     address assetAddress,
@@ -96,7 +101,6 @@ contract LuckBox is
     uint256 randomness,
     bool is1155
   );
-  
 
   constructor(
     string memory _name,
@@ -119,9 +123,7 @@ contract LuckBox is
     require(msg.value == ticketPrice, "Payment is not attached");
 
     if (address(factory) != address(0)) {
-      uint256 feeAmount = ticketPrice.mul(factory.feePercent()).div(
-        10000
-      );
+      uint256 feeAmount = ticketPrice.mul(factory.feePercent()).div(10000);
       _safeTransferETH(factory.devAddr(), feeAmount);
     }
 
@@ -131,7 +133,9 @@ contract LuckBox is
     // );
 
     uint256 hashRandomNumber = uint256(
-      keccak256(abi.encodePacked(now, msg.sender, factory.randomNonce(), address(this)))
+      keccak256(
+        abi.encodePacked(now, msg.sender, factory.randomNonce(), address(this))
+      )
     );
 
     _draw(hashRandomNumber, msg.sender, "0x00");
@@ -161,9 +165,8 @@ contract LuckBox is
     return address(this).balance;
   }
 
-
   // make a claim for an eligible winner
-  function claimNft(uint8 _slotId) public {
+  function _claimNft(uint8 _slotId) internal {
     require(MAX_SLOT > _slotId, "Invalid slot ID");
     require(list[_slotId].locked == true, "The slot is empty");
     require(list[_slotId].pendingWinnerToClaim == true, "Still has no winner");
@@ -191,6 +194,7 @@ contract LuckBox is
     list[_slotId].is1155 = false;
     list[_slotId].randomnessChance = 0;
     list[_slotId].pendingWinnerToClaim = false;
+    list[_slotId].winner = address(0);
 
     if (lastQueue >= firstQueue) {
       ReserveNft memory reserve = _dequeue();
@@ -219,9 +223,7 @@ contract LuckBox is
     require(msg.value == ticketPrice, "Payment is not attached");
 
     if (address(factory) != address(0)) {
-      uint256 feeAmount = ticketPrice.mul(factory.feePercent()).div(
-        10000
-      );
+      uint256 feeAmount = ticketPrice.mul(factory.feePercent()).div(10000);
       _safeTransferETH(factory.devAddr(), feeAmount);
     }
 
@@ -371,6 +373,8 @@ contract LuckBox is
     uint256 increment = 0;
     bool won = false;
     uint8 winningSlot = 0;
+    address winningAssetAddress = address(0);
+    uint256 winningTokenId = 0;
 
     for (uint8 i = 0; i < MAX_SLOT; i++) {
       Slot storage slot = list[i];
@@ -383,6 +387,9 @@ contract LuckBox is
 
           won = true;
           winningSlot = i;
+          winningAssetAddress = slot.assetAddress;
+          winningTokenId = slot.tokenId;
+          _claimNft(winningSlot);
         }
       }
     }
@@ -397,7 +404,7 @@ contract LuckBox is
 
     resultCount += 1;
 
-    emit Drawn(_drawer, won);
+    emit Drawn(_drawer, won, winningAssetAddress, winningTokenId);
   }
 
   function _enqueue(ReserveNft memory _data) private {
