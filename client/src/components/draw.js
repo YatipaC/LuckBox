@@ -6,6 +6,8 @@ import { useWeb3React } from "@web3-react/core"
 import { FactoryContext } from "../hooks/useFactoryData"
 import { shortAddress } from "../helper/index"
 import { useLuckBox } from "../hooks/useLuckBox"
+import LuckBoxABI from "../abi/LuckBox.json"
+import CongratModal from "../components/modals/CongratModal"
 
 const Wrapper = styled.div`
   height: 100vh;
@@ -231,11 +233,38 @@ const Draw = ({ data, setLuckBoxSelected, toggleManageSelected }) => {
 
   const [loading, setLoading] = useState(false)
   const [selectedNftDetail, setSelectedNftDetail] = useState()
+  const [detailData, setDetailData] = useState()
+  const [congratModalOpen, setCongratModalOpen] = useState(false)
+
+  const toggleCongratModal = () => {
+    setCongratModalOpen(!congratModalOpen)
+    setDetailData()
+  }
 
   const onDraw = useCallback(async () => {
     try {
       setLoading(true)
-      await draw(ticketPrice)
+      const box = new ethers.Contract(
+        boxAddress,
+        LuckBoxABI,
+        library.getSigner()
+      )
+      const estimateGas = await box.estimateGas.draw({
+        value: ethers.utils.parseEther(ticketPrice),
+      })
+      const tx = await draw(ticketPrice, { gasLimit: estimateGas.add(100000) })
+      toggleCongratModal()
+      box.on("Drawn", (drawer, isWon, assetAddress, tokenId) => {
+        if (drawer === account) {
+          setDetailData({
+            drawer,
+            isWon,
+            assetAddress,
+            tokenId,
+            tx,
+          })
+        }
+      })
     } catch (e) {
       console.log(e)
     } finally {
@@ -277,13 +306,21 @@ const Draw = ({ data, setLuckBoxSelected, toggleManageSelected }) => {
 
   return (
     <Wrapper>
+      {
+        <CongratModal
+          toggleModal={toggleCongratModal}
+          modalVisible={congratModalOpen}
+          drawData={detailData}
+          nftList={nftList}
+        />
+      }
       <Container>
         <TitleContainer>
           <div style={{ flex: 1 }} onClick={() => setLuckBoxSelected(null)}>
             {"<<"} Back
           </div>
           {/* <div>Ticket: {ticketPrice} MATIC</div> */}
-          <div style={{cursor : "default"}}> {data.name}</div>
+          <div style={{ cursor: "default" }}> {data.name}</div>
         </TitleContainer>
         <NFTContainerWrapper>
           <NFTContainer>
@@ -343,7 +380,7 @@ const Draw = ({ data, setLuckBoxSelected, toggleManageSelected }) => {
                           <td> {data.won && Number(data.slot) + 1}</td>
                           <td>{(Number(data.output) / 1000).toFixed(2)} </td>
                           <td>
-                            {isWinner && (
+                            {/* {isWinner && (
                               <Button
                                 style={{ fontSize: "14px", padding: "0px" }}
                                 disabled={loading}
@@ -351,7 +388,7 @@ const Draw = ({ data, setLuckBoxSelected, toggleManageSelected }) => {
                               >
                                 Claim
                               </Button>
-                            )}
+                            )} */}
                           </td>
                         </tr>
                       )
@@ -468,7 +505,7 @@ const Draw = ({ data, setLuckBoxSelected, toggleManageSelected }) => {
         <Steps>
           <u>To Play</u>
           <ol>
-          <li>Connnect your wallet to Polygon chain</li>
+            <li>Connnect your wallet to Polygon chain</li>
             <li>Check out hitting chance by clicking one of the NFT</li>
             <li>Clicking "Draw" button if you are interested</li>
             <li>

@@ -11,7 +11,7 @@ const fetchLuckBoxes = async (luckBoxesToFetch) => {
     luckBoxesToFetch.map(async (luckBoxConfig) => {
       const { boxAddress } = luckBoxConfig
 
-      const [ticketPrice, resultCount, owner, totalEth, totalLink] =
+      const [ticketPrice, resultCount, owner, totalEth] =
         await multicall(LuckBoxABI, [
           {
             address: boxAddress,
@@ -28,11 +28,7 @@ const fetchLuckBoxes = async (luckBoxesToFetch) => {
           {
             address: boxAddress,
             name: "totalEth",
-          },
-          {
-            address: boxAddress,
-            name: "totalLink",
-          },
+          }
         ])
 
       const resultData = await Promise.all(
@@ -161,7 +157,6 @@ const fetchLuckBoxes = async (luckBoxesToFetch) => {
         resultData: resultData.reverse(),
         owner: owner[0],
         totalEth: ethers.utils.formatEther(totalEth[0]._hex),
-        totalLink: ethers.utils.formatEther(totalLink[0]._hex),
       }
     })
   )
