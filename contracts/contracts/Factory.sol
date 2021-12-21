@@ -38,7 +38,7 @@ contract Factory is VRFConsumerBase, ReentrancyGuard, Ownable {
     uint256 public feePercent = 300; // 3%
     uint256 public constant MAX_FEE = 1000; // 10%
     
-    uint256 public COOLDOWN = 1 minutes;
+    uint256 public COOLDOWN = 3 seconds;
     uint256 public timestamp;
 
     // Chainlink constants on Polygon
