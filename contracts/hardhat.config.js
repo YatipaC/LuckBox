@@ -35,10 +35,10 @@ module.exports = {
   networks: {
     hardhat: {
       allowUnlimitedContractSize: true,
-      forking: {
-        url: process.env.POLYGON_URL,
-        blockNumber: 20480699,
-      },
+      // forking: {
+      //   url: process.env.POLYGON_URL,
+      //   blockNumber: 20480699,
+      // },
     },
     polygon: {
       allowUnlimitedContractSize: true,
