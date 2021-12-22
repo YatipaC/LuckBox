@@ -256,8 +256,8 @@ contract LuckBox is
   ) public nonReentrant onlyOwner {
     require(MAX_SLOT > _slotId, "Invalid slot ID");
     require(
-      1000 >= _randomness && _randomness >= 1,
-      "Randomness value must be between 0-1000"
+      2000 >= _randomness && _randomness >= 1,
+      "Randomness value must be between 0-2000"
     );
     // require(_is1155 == false, "Not supported ERC-1155 yet");
     require(list[_slotId].locked == false, "The slot is occupied");
@@ -356,6 +356,38 @@ contract LuckBox is
     _enqueue(reserve);
 
     emit StackedNft(_assetAddress, _tokenId, _randomness, _is1155);
+  }
+
+  function withdrawERC20(address _tokenAddress, uint256 _amount)
+    public
+    onlyOwner
+  {
+    IERC20(_tokenAddress).safeTransfer(msg.sender, _amount);
+  }
+
+  function withdrawERC721(address _tokenAddress, uint256 _tokenId)
+    public
+    onlyOwner
+  {
+    IERC721(_tokenAddress).safeTransferFrom(
+      address(this),
+      msg.sender,
+      _tokenId
+    );
+  }
+
+  function withdrawERC1155(
+    address _tokenAddress,
+    uint256 _tokenId,
+    uint256 _amount
+  ) public onlyOwner {
+    IERC1155(_assetAddress).safeTransferFrom(
+      address(this),
+      msg.sender,
+      _tokenId,
+      _amount,
+      "0x00"
+    );
   }
 
   // PRIVATE FUNCTIONS
