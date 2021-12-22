@@ -11,7 +11,7 @@ const fetchLuckBoxes = async (luckBoxesToFetch) => {
     luckBoxesToFetch.map(async (luckBoxConfig) => {
       const { boxAddress } = luckBoxConfig
 
-      const [ticketPrice, resultCount, owner, totalEth] =
+      const [ticketPrice, resultCount, owner, totalEth, firstQueue, lastQueue] =
         await multicall(LuckBoxABI, [
           {
             address: boxAddress,
@@ -28,7 +28,15 @@ const fetchLuckBoxes = async (luckBoxesToFetch) => {
           {
             address: boxAddress,
             name: "totalEth",
-          }
+          },
+          {
+            address: boxAddress,
+            name: "firstQueue",
+          },
+          {
+            address: boxAddress,
+            name: "lastQueue",
+          },
         ])
 
       const resultData = await Promise.all(
@@ -58,6 +66,85 @@ const fetchLuckBoxes = async (luckBoxesToFetch) => {
 
       const waitFor = (delay) =>
         new Promise((resolve) => setTimeout(resolve, delay))
+
+      let stackData = []
+
+      if (parseInt(firstQueue[0]) <= parseInt(lastQueue[0])) {
+        for (
+          let i = parseInt(firstQueue[0]);
+          i <= parseInt(lastQueue[0]);
+          i++
+        ) {
+          const [reserveData] = await multicall(LuckBoxABI, [
+            {
+              address: boxAddress,
+              name: "reserveQueue",
+              params: [i],
+            },
+          ])
+          if (reserveData.assetAddress !== ethers.constants.AddressZero) {
+            const erc721Calls = [
+              {
+                address: reserveData.assetAddress,
+                name: "tokenURI",
+                params: [reserveData.tokenId.toString()],
+              },
+            ]
+
+            const erc1155Calls = [
+              {
+                address: reserveData.assetAddress,
+                name: "uri",
+                params: [reserveData.tokenId.toString()],
+              },
+            ]
+
+            let [tokenURI] = reserveData.is1155
+              ? await multicall(ERC1155ABI, erc1155Calls)
+              : await multicall(ERC721ABI, erc721Calls)
+
+            tokenURI = reserveData.is1155 ? tokenURI[0] : tokenURI
+
+            let tokenObj
+
+            try {
+              // delayed on Pinata cloud
+              if (
+                tokenURI &&
+                tokenURI.toString().indexOf("gateway.pinata.cloud") !== -1
+              ) {
+                // tokenURI = tokenURI.toString().replace("gateway.pinata.cloud", "ipfs.io")
+                await waitFor(100 * i)
+              }
+
+              tokenObj = await axios.get(tokenURI)
+
+              // replace pinata node with IPFS node
+              if (
+                tokenObj &&
+                tokenObj.data &&
+                tokenObj.data.image &&
+                tokenObj.data.image.indexOf("gateway.pinata.cloud") !== -1
+              ) {
+                tokenObj.data.image = tokenObj.data.image.replace(
+                  "gateway.pinata.cloud",
+                  "ipfs.io"
+                )
+              }
+            } catch (e) {
+              console.log(`failed at index ${i}`)
+            }
+
+            stackData.push({
+              assetAddress: reserveData.assetAddress,
+              is1155: reserveData.is1155,
+              randomnessChance: reserveData.randomnessChance.toString(),
+              tokenId: reserveData.tokenId.toString(),
+              tokenURI: tokenObj && tokenObj.data,
+            })
+          }
+        }
+      }
 
       const data = await Promise.all(
         Array(parseInt(9))
@@ -157,6 +244,7 @@ const fetchLuckBoxes = async (luckBoxesToFetch) => {
         resultData: resultData.reverse(),
         owner: owner[0],
         totalEth: ethers.utils.formatEther(totalEth[0]._hex),
+        reserveData: stackData,
       }
     })
   )

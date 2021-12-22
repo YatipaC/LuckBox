@@ -61,9 +61,9 @@ const TypeButton = styled.div`
 `}
 `
 
-function AddNftModal({ toggleModal, modalVisible, boxAddress, slotId }) {
+function AddNftModal({ toggleModal, modalVisible, boxAddress }) {
   const { account, library } = useWeb3React()
-  const { depositNft } = useLuckBox(boxAddress, account, library)
+  const { stackNft } = useLuckBox(boxAddress, account, library)
   const [loading, setLoading] = useState(false)
   const [tokenType, setTokenType] = useState(721)
   const [randomness, setRandomness] = useState("")
@@ -111,13 +111,7 @@ function AddNftModal({ toggleModal, modalVisible, boxAddress, slotId }) {
   const onDepositNft = async () => {
     try {
       setLoading(true)
-      await depositNft(
-        slotId,
-        randomness,
-        assetAddress,
-        tokenId,
-        tokenType === 1155
-      )
+      await stackNft(assetAddress, randomness, tokenId, tokenType === 1155)
     } catch (e) {
       console.log(e)
     } finally {
@@ -137,7 +131,6 @@ function AddNftModal({ toggleModal, modalVisible, boxAddress, slotId }) {
         Add Nft
       </ModalHeader>
       <ModalBody>
-        <InputHeader>Slot: {slotId + 1}</InputHeader>
         <InputGroupContainer>
           <InputHeader>Random Percent</InputHeader>
           <InputGroup>

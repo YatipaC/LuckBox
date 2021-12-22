@@ -87,20 +87,6 @@ const BoxContainer = styled.div`
   margin-right: auto;
 `
 
-const FactoryDetail = styled.div`
-  display: flex;
-  align-items: center;
-  margin-bottom: 8px;
-  margin-right: 8px;
-`
-
-const Header = styled.div`
-  margin-right: 8px;
-  font-weight: bold;
-`
-
-const Detail = styled.div``
-
 const Box = ({ data, setLuckBoxSelected }) => {
   return (
     <BoxContainer onClick={() => setLuckBoxSelected(data)}>
