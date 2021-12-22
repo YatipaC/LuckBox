@@ -51,6 +51,22 @@ export const useLuckBox = (address, account, library, tick) => {
     [luckBoxContract, account]
   )
 
+  const stackNft = useCallback(
+    async (assetAddress, randomness, tokenId, is1155) => {
+      try {
+        return await luckBoxContract.stackNft(
+          assetAddress,
+          randomness * 100,
+          tokenId,
+          is1155
+        )
+      } catch (e) {
+        return Promise.reject(e.message)
+      }
+    },
+    [luckBoxContract, account]
+  )
+
   const withdrawNft = useCallback(
     async (slotId) => {
       try {
@@ -104,5 +120,6 @@ export const useLuckBox = (address, account, library, tick) => {
     withdrawEth,
     withdrawLink,
     setTicketPrice,
+    stackNft
   }
 }

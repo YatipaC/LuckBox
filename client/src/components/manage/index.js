@@ -1,4 +1,4 @@
-import React, { useContext, useCallback, useState, useMemo } from "react"
+import React, { useContext, useCallback, useState, useRef } from "react"
 import styled from "styled-components"
 import { Button } from "../Base"
 import { ethers } from "ethers"
@@ -8,6 +8,9 @@ import { shortAddress } from "../../helper/index"
 import { useLuckBox } from "../../hooks/useLuckBox"
 import SetTicketPriceModal from "../modals/SetTicketPrice"
 import AddNftModal from "../modals/AddNftModal"
+import StackNftModal from "../modals/StackNftModal"
+import Slider from "react-slick"
+import { LeftArrow, RightArrow, Arrow } from "../Base"
 
 const Wrapper = styled.div`
   height: 100vh;
@@ -103,6 +106,38 @@ const ItemContainer = styled.div`
   margin-bottom: 12px;
 `
 
+const StackContainer = styled.div`
+  position: relative;
+  width: 60%;
+  margin: 0 auto;
+  top: 35%;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+
+  .button-container {
+    width: 120px;
+    margin-top: 12px;
+  }
+
+  @media only screen and (max-width: 600px) {
+    top: 33%;
+  }
+`
+
+const SliderContainer = styled.div`
+  width: 800px;
+
+  @media only screen and (max-width: 1024px) {
+    width: 600px;
+  }
+
+  @media only screen and (max-width: 600px) {
+    width: 300px;
+  }
+`
+
 const Box = ({ data, setSelectedNftDetail, id, active }) => {
   let imageUrl
 
@@ -133,6 +168,7 @@ const Box = ({ data, setSelectedNftDetail, id, active }) => {
 }
 
 const Manage = ({ data, toggleManageSelected }) => {
+  let sliderRef = useRef()
   const { account, library } = useWeb3React()
   const { increaseTick } = useContext(FactoryContext)
   const {
@@ -142,17 +178,52 @@ const Manage = ({ data, toggleManageSelected }) => {
     ticketPrice,
     boxAddress,
     totalEth,
+    reserveData,
   } = data
   const { withdrawEth, withdrawNft } = useLuckBox(boxAddress, account, library)
-	console.log(boxAddress)
 
   const [loading, setLoading] = useState(false)
   const [setTicketVisible, setSetTicketVisible] = useState(false)
   const [addNftVisible, setAddNftVisible] = useState(false)
+  const [stackNftVisible, setStackNftVisible] = useState(false)
   const [selectedNftDetail, setSelectedNftDetail] = useState()
 
   const toggleSetTicket = () => setSetTicketVisible(!setTicketVisible)
   const toggleAddNft = () => setAddNftVisible(!addNftVisible)
+  const toggleStackNft = () => setStackNftVisible(!stackNftVisible)
+
+  const settings = {
+    dots: false,
+    infinite: false,
+    speed: 500,
+    slidesToShow: 3,
+    slidesToScroll: 3,
+    initialSlide: 0,
+    responsive: [
+      {
+        breakpoint: 1024,
+        settings: {
+          slidesToShow: 2,
+          slidesToScroll: 2,
+        },
+      },
+      {
+        breakpoint: 600,
+        settings: {
+          slidesToShow: 1,
+          slidesToScroll: 1,
+        },
+      },
+    ],
+  }
+
+  const onPrev = () => {
+    sliderRef.slickPrev()
+  }
+
+  const onNext = () => {
+    sliderRef.slickNext()
+  }
 
   let imageUrl
 
@@ -207,6 +278,11 @@ const Manage = ({ data, toggleManageSelected }) => {
         boxAddress={boxAddress}
         slotId={selectedNftDetail ? selectedNftDetail.id : 0}
       />
+      <StackNftModal
+        toggleModal={toggleStackNft}
+        modalVisible={stackNftVisible}
+        boxAddress={boxAddress}
+      />
       <Container>
         <TitleContainer>
           <div style={{ flex: 1 }} onClick={toggleManageSelected}>
@@ -228,6 +304,36 @@ const Manage = ({ data, toggleManageSelected }) => {
               ))}
           </NFTContainer>
         </NFTContainerWrapper>
+        <StackContainer>
+          {reserveData && (
+            <div style={{ display: "flex", alignItems: "center" }}>
+              <LeftArrow onClick={onPrev} />
+              <SliderContainer>
+                <Slider ref={(ref) => (sliderRef = ref)} {...settings}>
+                  {reserveData.map((item, index) => {
+                    return (
+                      <div key={index}>
+                        <Box data={item} />
+                      </div>
+                    )
+                  })}
+                </Slider>
+              </SliderContainer>
+              <RightArrow onClick={onNext} />
+            </div>
+          )}
+
+          {!reserveData && (
+            <div style={{ fontSize: "30px", marginTop: "15px" }}>
+              Loading...
+            </div>
+          )}
+          <div className='button-container'>
+            <Button disabled={loading} onClick={toggleStackNft}>
+              Stack NFT
+            </Button>
+          </div>
+        </StackContainer>
       </Container>
       <NftDetailContainer>
         {selectedNftDetail && Object.keys(selectedNftDetail).length > 1 && (
