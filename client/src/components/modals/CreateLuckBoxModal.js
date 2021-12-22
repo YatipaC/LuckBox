@@ -8,6 +8,7 @@ import {
   ModalFooter,
   InputGroupText,
   InputGroup,
+  Alert
 } from "reactstrap"
 import { useWeb3React } from "@web3-react/core"
 import styled from "styled-components"
@@ -62,16 +63,23 @@ function CreateLuckBoxModal({ toggleModal, modalVisible }) {
         Create Your Collection
       </ModalHeader>
       <ModalBody>
+
+      <Alert color="primary" size="sm">
+          Please reach out to us via either Telegram or Discord when done for the approval.
+        </Alert>
+
+
         <InputGroupContainer>
-          <InputHeader>Name</InputHeader>
+          <InputHeader>Name (To be displayed on the main screen)</InputHeader>
           <Input value={name} onChange={onNameChange} placeholder='Name' />
         </InputGroupContainer>
+        
         <InputGroupContainer>
-          <InputHeader>Symbol</InputHeader>
+          <InputHeader>Symbol (Short name of your Luckbox)</InputHeader>
           <Input value={symbol} onChange={onSymbolChange} placeholder='Symbol' />
         </InputGroupContainer>
         <InputGroupContainer>
-          <InputHeader>Ticket Price</InputHeader>
+          <InputHeader>Ticket Price (You will receive when the user draws yours)</InputHeader>
           <InputGroup>
             <Input
               value={ticketPrice}
@@ -89,8 +97,10 @@ function CreateLuckBoxModal({ toggleModal, modalVisible }) {
           </div>
         )}
 
+        
       </ModalBody>
       <ModalFooter>
+        
         <Button disabled={loading || !account} color='primary' onClick={onCreateLuckBox}>
           Proceed
         </Button>
