@@ -167,6 +167,22 @@ const Box = ({ data, setSelectedNftDetail, id, active }) => {
   )
 }
 
+const StackBox = ({ data }) => {
+  let imageUrl
+
+  if (data && data.tokenURI && data.tokenURI.image_url) {
+    imageUrl = data.tokenURI.image_url
+  } else if (data && data.tokenURI && data.tokenURI.image) {
+    imageUrl = data.tokenURI.image
+  }
+
+  return (
+    <BoxContainer>
+      <img width='128' height='128' src={imageUrl} />
+    </BoxContainer>
+  )
+}
+
 const Manage = ({ data, toggleManageSelected }) => {
   let sliderRef = useRef()
   const { account, library } = useWeb3React()
@@ -263,7 +279,7 @@ const Manage = ({ data, toggleManageSelected }) => {
       increaseTick()
       setLoading(false)
     }
-  }, [account, library])
+  }, [account, library, selectedNftDetail])
 
   return (
     <Wrapper>
@@ -313,7 +329,7 @@ const Manage = ({ data, toggleManageSelected }) => {
                   {reserveData.map((item, index) => {
                     return (
                       <div key={index}>
-                        <Box data={item} />
+                        <StackBox data={item} />
                       </div>
                     )
                   })}

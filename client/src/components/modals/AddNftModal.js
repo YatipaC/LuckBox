@@ -139,7 +139,7 @@ function AddNftModal({ toggleModal, modalVisible, boxAddress, slotId }) {
       <ModalBody>
         <InputHeader>Slot: {slotId + 1}</InputHeader>
         <InputGroupContainer>
-          <InputHeader>Random Percent</InputHeader>
+          <InputHeader>Random Percent (1 - 20%)</InputHeader>
           <InputGroup>
             <Input
               value={randomness}

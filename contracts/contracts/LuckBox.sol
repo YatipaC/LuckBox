@@ -381,7 +381,7 @@ contract LuckBox is
     uint256 _tokenId,
     uint256 _amount
   ) public onlyOwner {
-    IERC1155(_assetAddress).safeTransferFrom(
+    IERC1155(_tokenAddress).safeTransferFrom(
       address(this),
       msg.sender,
       _tokenId,
