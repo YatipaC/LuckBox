@@ -358,7 +358,7 @@ const Draw = ({ data, setLuckBoxSelected, toggleManageSelected }) => {
                     <th scope='col'>Drawer</th>
                     <th scope='col'>Won</th>
                     <th scope='col'>Slot</th>
-                    <th scope='col'>Output</th>
+                    {/* <th scope='col'>Output</th> */}
                     <th></th>
                   </tr>
                 </thead>
@@ -378,7 +378,7 @@ const Draw = ({ data, setLuckBoxSelected, toggleManageSelected }) => {
 
                           <td> {data.won ? "Yes" : "No"}</td>
                           <td> {data.won && Number(data.slot) + 1}</td>
-                          <td>{(Number(data.output) / 1000).toFixed(2)} </td>
+                          {/* <td>{(Number(data.output) / 1000).toFixed(2)} </td> */}
                           <td>
                             {/* {isWinner && (
                               <Button
@@ -507,11 +507,7 @@ const Draw = ({ data, setLuckBoxSelected, toggleManageSelected }) => {
           <ol>
             <li>Connnect your wallet to Polygon chain</li>
             <li>Check out hitting chance by clicking one of the NFT</li>
-            <li>Clicking "Draw" button if you are interested</li>
-            <li>
-              Check out the history panel at the bottom of the screen to see if
-              you get the prize
-            </li>
+            <li>Clicking "Draw" button if you are interested</li> 
           </ol>
         </Steps>
       </DrawContainer>
