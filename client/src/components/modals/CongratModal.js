@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useCallback, useContext } from "react"
-import { Button, Modal, ModalHeader, ModalBody, ModalFooter } from "reactstrap"
+import { Button, Modal, ModalHeader, ModalBody, ModalFooter  } from "reactstrap"
 import { useWeb3React } from "@web3-react/core"
 import styled, { css } from "styled-components"
 import { FadeLoader } from "react-spinners"
@@ -39,22 +39,25 @@ function CongratModal({ toggleModal, modalVisible, drawData, nftList }) {
   const winnerNft =
     nftList && drawData
       ? nftList.find(
-          (data) =>
-            data.assetAddress.toLowerCase() ===
-              drawData.assetAddress.toLowerCase() &&
-            data.tokenId === drawData.tokenId.toString()
-        )
+        (data) =>
+          data.assetAddress.toLowerCase() ===
+          drawData.assetAddress.toLowerCase() &&
+          data.tokenId === drawData.tokenId.toString()
+      )
       : null
 
   return (
     <Modal isOpen={modalVisible} toggle={toggleModal}>
       <ModalHeader style={{ color: "#000" }} toggle={toggleModal}>
-        { !drawData ? "Your result is being processed" : "Your result is finally here" }
+        {!drawData ? "Your result is being processed" : "Your result is finally here"}
       </ModalHeader>
       <ModalBody>
         <ContentContainer>
           {!drawData ? (
-            <FadeLoader height='15' width='5' radius='2' margin='2' />
+            <>
+              <FadeLoader height='15' width='5' radius='2' margin='2' />
+              <p style={{marginTop: 10}}>Close this modal doesn't block you to receive the prize</p> 
+            </>
           ) : drawData.isWon ? (
             <>
               <Header>🎉 Congrats! You received NFT 🎉</Header>
@@ -75,7 +78,7 @@ function CongratModal({ toggleModal, modalVisible, drawData, nftList }) {
                 target='_blank'
               >
                 View Your Transaction
-              </Link> 
+              </Link>
             </>
           )}
         </ContentContainer>
