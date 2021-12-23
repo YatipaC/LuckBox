@@ -1,0 +1,11 @@
+{
+    "name": "luckbox-scheduler",
+    "main": "index.js",
+    "dependencies": {
+        "@pulumi/pulumi": "^3.0.0",
+        "@pulumi/aws": "^4.0.0",
+        "@pulumi/awsx": "^0.30.0",
+        "axios": "^0.22.0",
+        "ethers": "^5.4.7"
+    }
+}
