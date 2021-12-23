@@ -81,7 +81,8 @@ contract Factory is VRFConsumerBase, ReentrancyGuard, Ownable {
         symbol: symbol,
         owner: msg.sender,
         contractAddress: newLuckbox,
-        banned: false
+        banned: false,
+        approved: false
       })
     );
 
@@ -131,6 +132,10 @@ contract Factory is VRFConsumerBase, ReentrancyGuard, Ownable {
 
   function isBanned(uint256 _id) public view returns (bool) {
     return boxes[_id].banned;
+  }
+
+  function isApproved(uint256 _id) public view returns (bool) {
+    return boxes[_id].approved;
   }
 
   // ADMIN FUNCTIONS
