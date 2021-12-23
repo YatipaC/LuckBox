@@ -196,7 +196,7 @@ contract LuckBox is
     list[_slotId].pendingWinnerToClaim = false;
     list[_slotId].winner = address(0);
 
-    if (lastQueue >= firstQueue) {
+    if (lastQueue > firstQueue) {
       ReserveNft memory reserve = _dequeue();
 
       list[_slotId].locked = true;
