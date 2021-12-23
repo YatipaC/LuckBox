@@ -135,63 +135,39 @@ const Info = () => {
           <TabContent activeTab={activeTab}>
             <TabPane tabId='1'>
               <Content>
-                Lucky box is a collection of NFTs which are unknown until the
-                box is opened. <br />
+                NFT Luckbox is an NFT Gachapon project powered by Chainlink VRF technology live now on Polygon Mainnet allows anyone to draw the NFT with fairness and guaranteed output delivery. The project is NFT-agnostic which means any NFT that based on ERC-721 and ERC-1155 can be deposited and waited for you to get it.
                 <br />
-                An NFT Gachapon powered by Chainlink VRF which is live on
-                Polygon Mainnet at https://luckbox.wtf , the project is
-                NFT-agnostic which means you can draw the NFT from any project
-                that has been deposited into the Gachapon smart contract by its
-                owner. <br />
                 <br />
-                The Gachapon contract owner must sourcing attractive NFTs to be
-                listed and responsible to set the ticket price in MATIC unit,
-                winning chance in percentage terms, all of parameters can be
-                visible from the user and seen whether they want to try their
-                luck or not. <br />
+                Anyone can be a Gachapon contract owner and reponsible to find attrative NFTs and listed in your Gachapon and taking a passive income when someone open your Gachapon.
                 <br />
-                As this project is in the early stage of development, there are
-                some conditions and limitations you need to aware of as
-                following: <br />
                 <br />
-                <ul>
-                  <li>Network: Polygon Mainnet</li>
-
-                  <li>Settlement Token: $MATIC </li>
-
-                  <li>
-                    Support of ERC-721 only (will be working on ERC-1155 later
-                    on){" "}
-                  </li>
-
-                  <li>Winning chance per NFT: 0.01%-10% </li>
-
-                  <li>Max. NFT per Gachapon contract: 9 </li>
-                </ul>
+                Please be reminded that the prohect is in the early stage of development, do not hesitate to contact us if you have issues whether from being a drawer or Gachapon owner.
+                <br />
+                <br />
+                <div style={{ textAlign: "center" }}>
+                  <a href="https://t.me/tamagofinance" target="_blank">Telegram</a> | <a href="https://discord.gg/78fax5dPqk" target="_blank">Discord</a>
+                </div>
               </Content>
             </TabPane>
             <TabPane tabId='2'>
               <Content>
-                Step by Step <br />
-                1) Connect your wallet. <br />
-                2) On the main screen, you will see all Gachapon contracts
-                (choose Box, NFT inside) available in the system, click through
-                it to see what NFTs are being offered from them. <br />
-                3) Check out hitting chance by clicking one of the 9 NFTs.{" "}
-                <br />
-                4) If you are satisfied to play, don’t hesitate to draw it and
-                you will need to pay the draw price. <br />
-                5) Refresh the website and look for the result at the history
-                panel on the bottom of the screen. If you are lucky enough, then
-                you can claim the NFT from there.
+                <u>Steps</u> <br />
+                1) Connect your wallet and network <br />
+                2) You will see all collections (choose Box, NFT inside) available in the system, click through it to see what NFTs are being offered from them. <br />
+                3) Check out hitting chance by clicking one of the NFTs.<br/>
+                4) Draw it if you want and you will need to pay the ticket that will be transfered to the collection owner.
               </Content>
             </TabPane>
             <TabPane tabId='3'>
               <Content>
-                1) Which wallet can I connect? <br />
-                2) Which network is accepted? <br />
-                3) How is the drawing mechanism? <br />
-                4) How can I check if I was lucky and claim my prize?
+                1) Which wallet can I connect to? <br />
+                <i style={{ marginRight: 25 }} />We support MetaMask, imToken, WalletConnect, and Wallet Link. <br />
+                2) Which network is supported right now?<br />
+                <i style={{ marginRight: 25 }} />NFT Luckbox is currently live on Polygon Mainnet.<br />
+                3) How is the drawing mechanism?<br />
+                <i style={{ marginRight: 25 }} />The randomness of the Luck Box is very fair. The Gachapon contract owner will set a winning percentage. For example, if there are two NFTs in the Gachapon contract and the owner sets the probability of winning to 10%, it will send the request to Chainlink VRF to find a random number between 0 to 10,000. You will receive the first NFT if the number returned is between 0-1000 and the second NFT if the number is between 1001-2000. The rules are simple.<br />
+                4) How can I check if I was lucky and claim my prize?<br />
+                <i style={{ marginRight: 25 }} />If you win the prize, the LuckBox (Gachapon) smart contract will automatically transfer the NFT to you.
                 <br />{" "}
               </Content>
             </TabPane>
