@@ -194,7 +194,21 @@ const fetchLuckBoxes = async (luckBoxesToFetch) => {
                   await waitFor(100 * index)
                 }
 
-                tokenObj = await axios.get(tokenURI)
+                if (tokenURI && tokenURI.toString().indexOf("{id}") !== -1) {
+                  tokenURI = tokenURI.replace("{id}", `${nftBox.tokenId}`)
+                }
+
+                if (tokenURI && tokenURI.toString().indexOf("tamagofinance-nft-metadata-api.vercel.app/api/egg/2") !== -1) {
+                  // hard-coded for Tamago Finance NFT
+                  tokenObj = {}
+                  tokenObj.data =  {"name":"Tamago Finance - #2 Lego Egg","description":"Early Adopters will obtain this exclusive Tamago NFT by joining Tamago’s early user interview, helping Tamago to test out the product.","external_url":"https://tamago.finance/","image":"https://tamago.oss-cn-hongkong.aliyuncs.com/nft/2.png"}
+                } else if (tokenURI && tokenURI.toString().indexOf("metadata.cryptoempire.cards/api/avatars") !== -1) {
+                  // hard-coded for Crypto Empire
+                  tokenObj = {}
+                  tokenObj.data = {"name":`AVATAR OF BANCOR THE \"PRODIGY\" #${nftBox.tokenId}`,"description":"CryptoEmpire Avatars are gifts to the early community members and NFT card holders of the CryptoEmpire project. 3,000 avatars, inspired by the CryptoEmpire NFTs, were distributed to select addresses.","external_url":"https://cryptoempire.cards/","image": `https://assets.cryptoempire.cards/avatars/${nftBox.tokenId}.png`}
+                } else {
+                  tokenObj = await axios.get(tokenURI)
+                }
 
                 // replace pinata node with IPFS node
                 if (

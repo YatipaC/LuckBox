@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback, useContext } from "react"
+import React, { useState, useEffect, useCallback, useContext, useMemo } from "react"
 import { Button, Modal, ModalHeader, ModalBody, ModalFooter  } from "reactstrap"
 import { useWeb3React } from "@web3-react/core"
 import styled, { css } from "styled-components"
@@ -46,6 +46,19 @@ function CongratModal({ toggleModal, modalVisible, drawData, nftList }) {
       )
       : null
 
+  const imageUrl = useMemo(() => {
+
+    if (winnerNft && winnerNft.tokenURI && winnerNft.tokenURI.image) {
+      return winnerNft.tokenURI.image
+    }
+
+    if (winnerNft && winnerNft.tokenURI && winnerNft.tokenURI.image_url) {
+      return winnerNft.tokenURI.image_url
+    }
+
+    return 
+  },[winnerNft])
+
   return (
     <Modal isOpen={modalVisible} toggle={toggleModal}>
       <ModalHeader style={{ color: "#000" }} toggle={toggleModal}>
@@ -61,7 +74,7 @@ function CongratModal({ toggleModal, modalVisible, drawData, nftList }) {
           ) : drawData.isWon ? (
             <>
               <Header>🎉 Congrats! You received NFT 🎉</Header>
-              <img width='128' height='128' src={winnerNft.tokenURI.image} />
+              <img width='128' height='128' src={imageUrl} />
               <Link
                 href={`https://polygonscan.com/tx/${drawData.tx.hash}`}
                 target='_blank'
