@@ -3,6 +3,8 @@ import styled from "styled-components"
 import { Button } from "./Base"
 import { ethers } from "ethers"
 import { useWeb3React } from "@web3-react/core"
+import ReactHtmlParser from 'react-html-parser'; 
+
 import { FactoryContext } from "../hooks/useFactoryData"
 import { shortAddress } from "../helper/index"
 import { useLuckBox } from "../hooks/useLuckBox"
@@ -174,17 +176,23 @@ const ResultRow = styled.div`
 
 const Box = ({ data, setSelectedNftDetail, id, active }) => {
   let imageUrl
-
+ 
   if (data && data.tokenURI && data.tokenURI.image_url) {
     imageUrl = data.tokenURI.image_url
   } else if (data && data.tokenURI && data.tokenURI.image) {
     imageUrl = data.tokenURI.image
   }
 
+  let imageData 
+
+  if (data && data.tokenURI && data.tokenURI.image_data) {
+    imageData = data.tokenURI.image_data
+  }
+
   return (
     <>
       {data.assetAddress === ethers.constants.AddressZero ||
-      data.pendingWinnerToClaim ? (
+        data.pendingWinnerToClaim ? (
         <BoxContainer
           active={active}
           onClick={() => setSelectedNftDetail(null)}
@@ -194,7 +202,8 @@ const Box = ({ data, setSelectedNftDetail, id, active }) => {
           active={active}
           onClick={() => setSelectedNftDetail({ id, ...data })}
         >
-          <img width='128' height='128' src={imageUrl} />
+          { imageUrl && <img width='128' height='128' src={imageUrl} />}
+          { imageData && <div style={{width : "100%", height : "100%"}}> { ReactHtmlParser (imageData) } </div>}
         </BoxContainer>
       )}
     </>
@@ -303,7 +312,7 @@ const Draw = ({ data, setLuckBoxSelected, toggleManageSelected }) => {
   ) {
     imageUrl = selectedNftDetail.tokenURI.image
   }
-
+ 
   return (
     <Wrapper>
       {
@@ -435,14 +444,14 @@ const Draw = ({ data, setLuckBoxSelected, toggleManageSelected }) => {
               <hr/>
               hello
             </FactoryDetail> */}
-            {data && data.name === "CryptoSharks Eureka" && (
+            {selectedNftDetail && selectedNftDetail.assetAddress === "0x85CBf58C9d20459339a0b1F586A5FAC643a29286" && (
               <>
                 <hr />
                 <p>
                   The CryptoSharks is a collection of unique Sharks living on
                   Polygon Blockchain.
                 </p>
-                <p>Floor Price : $22 (27 Nov. 22)</p>
+                <p>Floor Price : $22 (27 Nov. 21)</p>
                 <p>
                   Links :{" "}
                   <a
@@ -458,7 +467,7 @@ const Draw = ({ data, setLuckBoxSelected, toggleManageSelected }) => {
                 </p>
               </>
             )}
-            {data && data.name === "Chicken Derby Shalala" && (
+            {selectedNftDetail && selectedNftDetail.assetAddress === "0x8634666bA15AdA4bbC83B9DbF285F73D9e46e4C2" && (
               <>
                 <hr />
                 <p>
@@ -466,7 +475,7 @@ const Draw = ({ data, setLuckBoxSelected, toggleManageSelected }) => {
                   can own and race your chicken to earn ETH. Brought by the
                   makers of Ganja Farmer.
                 </p>
-                <p>Floor Price : $226 (27 Nov. 22)</p>
+                <p>Floor Price : $226 (27 Nov. 21)</p>
                 <p>
                   Links :{" "}
                   <a
@@ -482,6 +491,99 @@ const Draw = ({ data, setLuckBoxSelected, toggleManageSelected }) => {
                 </p>
               </>
             )}
+            {selectedNftDetail && selectedNftDetail.assetAddress === "0x2215463d57ed278a778C5cfD9509919ACf8CEF8d" && (
+              <>
+                <hr />
+                <p>
+                  Early Adopters will obtain this exclusive Tamago NFT by joining Tamago’s early user interview, helping Tamago to test out the product.
+                </p>
+                <p>Floor Price : $174 (23 Dec. 21)</p>
+                <p>
+                  Links :{" "}
+                  <a
+                    href='https://opensea.io/collection/tamago-finance'
+                    target='_blank'
+                  >
+                    OpenSea
+                  </a>
+                  ,{" "}
+                  <a href='https://twitter.com/TamagoFinance' target='_blank'>
+                    Twitter
+                  </a>
+                </p>
+              </>
+            )}
+
+            {selectedNftDetail && selectedNftDetail.assetAddress === "0x7bC48b21d4985EB8F34807A389161192832dB924" && (
+              <>
+                <hr />
+                <p>
+                  Official 0N1 Force Cryptovoxels wearables to rep in the Metaverse! All wearables will be airdropped to 0N1 Force holders!
+                </p>
+                <p>Floor Price : $18 (23 Dec. 21)</p>
+                <p>
+                  Links :{" "}
+                  <a
+                    href='https://opensea.io/collection/0n1-corp'
+                    target='_blank'
+                  >
+                    OpenSea
+                  </a>
+                  ,{" "}
+                  <a href='https://www.twitter.com/0n1force' target='_blank'>
+                    Twitter
+                  </a>
+                </p>
+              </>
+            )}
+
+
+            {selectedNftDetail && selectedNftDetail.assetAddress === "0x109440e0a0b37c0E2A17F91bDEa42A8Fb17663FB" && (
+              <>
+                <hr />
+                <p>
+                  CryptoEmpire Avatars are gifts to the early community members and NFT card holders of the CryptoEmpire project. 3,000 avatars, inspired by the CryptoEmpire NFTs, were distributed to select addresses.
+                </p>
+                <p>Floor Price : $4 (23 Dec. 21)</p>
+                <p>
+                  Links :{" "}
+                  <a
+                    href='https://opensea.io/collection/cryptoempire-avatars'
+                    target='_blank'
+                  >
+                    OpenSea
+                  </a>
+                  ,{" "}
+                  <a href='https://www.twitter.com/cryptoempirenft' target='_blank'>
+                    Twitter
+                  </a>
+                </p>
+              </>
+            )}
+
+            {selectedNftDetail && selectedNftDetail.assetAddress === "0x86935F11C86623deC8a25696E1C19a8659CbF95d" && (
+              <>
+                <hr />
+                <p>
+                Aavegotchis are rare crypto-collectibles living on the Ethereum blockchain, backed by the ERC721 standard.
+                </p>
+                
+                <p>
+                  Links :{" "}
+                  <a
+                    href='https://aavegotchi.com/'
+                    target='_blank'
+                  >
+                    Website
+                  </a>
+                  ,{" "}
+                  <a href='https://twitter.com/aavegotchi' target='_blank'>
+                    Twitter
+                  </a>
+                </p>
+              </>
+            )}
+
           </ItemContainer>
           {/* <Button style={{ width: "100%" }} disabled={loading || !pendingClaimed} onClick={() => onClaim(selectedNftDetail.id)}>
             Claim
@@ -507,7 +609,7 @@ const Draw = ({ data, setLuckBoxSelected, toggleManageSelected }) => {
           <ol>
             <li>Connnect your wallet to Polygon chain</li>
             <li>Check out hitting chance by clicking one of the NFT</li>
-            <li>Clicking "Draw" button if you are interested</li> 
+            <li>Clicking "Draw" button if you are interested</li>
           </ol>
         </Steps>
       </DrawContainer>
