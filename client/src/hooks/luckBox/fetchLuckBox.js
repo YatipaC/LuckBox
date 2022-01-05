@@ -3,6 +3,7 @@ import { ethers } from "ethers"
 import multicall from "../../utils/multicall"
 import LuckBoxABI from "../../abi/LuckBox.json"
 import ERC721ABI from "../../abi/ERC721.json"
+import ERC1155ABI from "../../abi/ERC1155.json"
 import axios from "axios"
 
 const fetchLuckBoxes = async (luckBoxesToFetch) => {
@@ -10,16 +11,33 @@ const fetchLuckBoxes = async (luckBoxesToFetch) => {
     luckBoxesToFetch.map(async (luckBoxConfig) => {
       const { boxAddress } = luckBoxConfig
 
-      const [ticketPrice, resultCount] = await multicall(LuckBoxABI, [
-        {
-          address: boxAddress,
-          name: "ticketPrice",
-        },
-        {
-          address: boxAddress,
-          name: "resultCount",
-        },
-      ])
+      const [ticketPrice, resultCount, owner, totalEth, firstQueue, lastQueue] =
+        await multicall(LuckBoxABI, [
+          {
+            address: boxAddress,
+            name: "ticketPrice",
+          },
+          {
+            address: boxAddress,
+            name: "resultCount",
+          },
+          {
+            address: boxAddress,
+            name: "owner",
+          },
+          {
+            address: boxAddress,
+            name: "totalEth",
+          },
+          {
+            address: boxAddress,
+            name: "firstQueue",
+          },
+          {
+            address: boxAddress,
+            name: "lastQueue",
+          },
+        ])
 
       const resultData = await Promise.all(
         Array(parseInt(resultCount[0]))
@@ -46,7 +64,87 @@ const fetchLuckBoxes = async (luckBoxesToFetch) => {
           })
       )
 
-      const waitFor = delay => new Promise(resolve => setTimeout(resolve, delay));
+      const waitFor = (delay) =>
+        new Promise((resolve) => setTimeout(resolve, delay))
+
+      let stackData = []
+
+      if (parseInt(firstQueue[0]) <= parseInt(lastQueue[0])) {
+        for (
+          let i = parseInt(firstQueue[0]);
+          i <= parseInt(lastQueue[0]);
+          i++
+        ) {
+          const [reserveData] = await multicall(LuckBoxABI, [
+            {
+              address: boxAddress,
+              name: "reserveQueue",
+              params: [i],
+            },
+          ])
+          if (reserveData.assetAddress !== ethers.constants.AddressZero) {
+            const erc721Calls = [
+              {
+                address: reserveData.assetAddress,
+                name: "tokenURI",
+                params: [reserveData.tokenId.toString()],
+              },
+            ]
+
+            const erc1155Calls = [
+              {
+                address: reserveData.assetAddress,
+                name: "uri",
+                params: [reserveData.tokenId.toString()],
+              },
+            ]
+
+            let [tokenURI] = reserveData.is1155
+              ? await multicall(ERC1155ABI, erc1155Calls)
+              : await multicall(ERC721ABI, erc721Calls)
+
+            tokenURI = reserveData.is1155 ? tokenURI[0] : tokenURI
+
+            let tokenObj
+
+            try {
+              // delayed on Pinata cloud
+              if (
+                tokenURI &&
+                tokenURI.toString().indexOf("gateway.pinata.cloud") !== -1
+              ) {
+                // tokenURI = tokenURI.toString().replace("gateway.pinata.cloud", "ipfs.io")
+                await waitFor(100 * i)
+              }
+
+              tokenObj = await axios.get(tokenURI)
+
+              // replace pinata node with IPFS node
+              if (
+                tokenObj &&
+                tokenObj.data &&
+                tokenObj.data.image &&
+                tokenObj.data.image.indexOf("gateway.pinata.cloud") !== -1
+              ) {
+                tokenObj.data.image = tokenObj.data.image.replace(
+                  "gateway.pinata.cloud",
+                  "ipfs.io"
+                )
+              }
+            } catch (e) {
+              console.log(`failed at index ${i}`)
+            }
+
+            stackData.push({
+              assetAddress: reserveData.assetAddress,
+              is1155: reserveData.is1155,
+              randomnessChance: reserveData.randomnessChance.toString(),
+              tokenId: reserveData.tokenId.toString(),
+              tokenURI: tokenObj && tokenObj.data,
+            })
+          }
+        }
+      }
 
       const data = await Promise.all(
         Array(parseInt(9))
@@ -70,30 +168,63 @@ const fetchLuckBoxes = async (luckBoxesToFetch) => {
                 },
               ]
 
-              let [tokenURI] = await multicall(ERC721ABI, erc721Calls)
+              const erc1155Calls = [
+                {
+                  address: nftBox.assetAddress,
+                  name: "uri",
+                  params: [nftBox.tokenId.toString()],
+                },
+              ]
+
+              let [tokenURI] = nftBox.is1155
+                ? await multicall(ERC1155ABI, erc1155Calls)
+                : await multicall(ERC721ABI, erc721Calls)
+
+              tokenURI = nftBox.is1155 ? tokenURI[0] : tokenURI
 
               let tokenObj
 
               try {
-
                 // delayed on Pinata cloud
-                if (tokenURI && tokenURI.toString().indexOf("gateway.pinata.cloud") !== -1) {
+                if (
+                  tokenURI &&
+                  tokenURI.toString().indexOf("gateway.pinata.cloud") !== -1
+                ) {
                   // tokenURI = tokenURI.toString().replace("gateway.pinata.cloud", "ipfs.io")
-                  await waitFor(100*index)
+                  await waitFor(100 * index)
                 }
 
-                tokenObj = await axios.get(tokenURI)
+                if (tokenURI && tokenURI.toString().indexOf("{id}") !== -1) {
+                  tokenURI = tokenURI.replace("{id}", `${nftBox.tokenId}`)
+                }
+
+                if (tokenURI && tokenURI.toString().indexOf("tamagofinance-nft-metadata-api.vercel.app/api/egg/2") !== -1) {
+                  // hard-coded for Tamago Finance NFT
+                  tokenObj = {}
+                  tokenObj.data =  {"name":"Tamago Finance - #2 Lego Egg","description":"Early Adopters will obtain this exclusive Tamago NFT by joining Tamago’s early user interview, helping Tamago to test out the product.","external_url":"https://tamago.finance/","image":"https://tamago.oss-cn-hongkong.aliyuncs.com/nft/2.png"}
+                } else if (tokenURI && tokenURI.toString().indexOf("metadata.cryptoempire.cards/api/avatars") !== -1) {
+                  // hard-coded for Crypto Empire
+                  tokenObj = {}
+                  tokenObj.data = {"name":`AVATAR OF BANCOR THE \"PRODIGY\" #${nftBox.tokenId}`,"description":"CryptoEmpire Avatars are gifts to the early community members and NFT card holders of the CryptoEmpire project. 3,000 avatars, inspired by the CryptoEmpire NFTs, were distributed to select addresses.","external_url":"https://cryptoempire.cards/","image": `https://assets.cryptoempire.cards/avatars/${nftBox.tokenId}.png`}
+                } else {
+                  tokenObj = await axios.get(tokenURI)
+                }
 
                 // replace pinata node with IPFS node
-                if (tokenObj && tokenObj.data && tokenObj.data.image && tokenObj.data.image.indexOf("gateway.pinata.cloud") !== -1) {
-                  tokenObj.data.image = tokenObj.data.image.replace("gateway.pinata.cloud", "ipfs.io")
+                if (
+                  tokenObj &&
+                  tokenObj.data &&
+                  tokenObj.data.image &&
+                  tokenObj.data.image.indexOf("gateway.pinata.cloud") !== -1
+                ) {
+                  tokenObj.data.image = tokenObj.data.image.replace(
+                    "gateway.pinata.cloud",
+                    "ipfs.io"
+                  )
                 }
-
               } catch (e) {
                 console.log(`failed at index ${index}`)
               }
-
-              
 
               return {
                 assetAddress: nftBox.assetAddress,
@@ -125,6 +256,9 @@ const fetchLuckBoxes = async (luckBoxesToFetch) => {
         nftList: data,
         ticketPrice: ethers.utils.formatEther(ticketPrice[0]._hex),
         resultData: resultData.reverse(),
+        owner: owner[0],
+        totalEth: ethers.utils.formatEther(totalEth[0]._hex),
+        reserveData: stackData,
       }
     })
   )

@@ -11,9 +11,11 @@ import WalletConnectLogo from "./images/wallet-provider/wallet-connect.svg"
 import CoinbaseLogo from "./images/wallet-provider/coinbase.svg"
 import ImTokenLogo from "./images/wallet-provider/imToken.jpeg"
 
+import { POLYGON_RPC_SERVER } from "./constants"
+
 const RPC = {
   42: "https://eth-kovan.alchemyapi.io/v2/6OVAa_B_rypWWl9HqtiYK26IRxXiYqER",
-  137: "https://rpc-mainnet.maticvigil.com",
+  137: POLYGON_RPC_SERVER,
   80001: "https://rpc-mumbai.matic.today",
 }
 

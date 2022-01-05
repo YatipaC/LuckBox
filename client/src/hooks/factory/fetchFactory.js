@@ -35,12 +35,22 @@ const fetchFactory = async (factoryToFetch) => {
             name: "getBoxContractAddress",
             params: [index],
           },
+          {
+            address: factoryToFetch,
+            name: "isBanned",
+            params: [index],
+          },
+          {
+            address: factoryToFetch,
+            name: "isApproved",
+            params: [index],
+          },
         ]
 
-        const [name, symbol, owner, boxAddress] = await multicall(
-          FactoryABI,
-          calls
-        )
+        const [name, symbol, owner, boxAddress, isBanned, isApproved] =
+          await multicall(FactoryABI, calls)
+
+        if (!isApproved[0] || isBanned[0]) return
 
         return {
           name: name[0],
@@ -50,7 +60,7 @@ const fetchFactory = async (factoryToFetch) => {
         }
       })
   )
-  return result
+  return result.filter(data => data)
 }
 
 export default fetchFactory

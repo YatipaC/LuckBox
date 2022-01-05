@@ -4,7 +4,8 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "deploy:polygon:factory": "hardhat --network polygon deploy --tags Factory"
   },
   "keywords": [],
   "author": "",
@@ -14,11 +15,12 @@
     "@openzeppelin/contracts": "3.4",
     "@openzeppelin/contracts-ethereum-package": "^3.0.0",
     "@openzeppelin/test-helpers": "^0.5.11",
-    "hardhat": "^2.6.8"
+    "hardhat": "^2.6.8",
+    "hardhat-deploy": "^0.9.14"
   },
   "devDependencies": {
     "@nomiclabs/hardhat-ethers": "^2.0.2",
-    "@nomiclabs/hardhat-etherscan": "^2.1.7",
+    "@nomiclabs/hardhat-etherscan": "^2.1.8",
     "@nomiclabs/hardhat-waffle": "^2.0.1",
     "chai": "^4.3.4",
     "dotenv": "^10.0.0",

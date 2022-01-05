@@ -10,13 +10,24 @@ const Wrapper = styled.div`
         font-size: 20px;
     }
 
+    a {
+        color: inherit;
+        text-decoration: initial;
+
+        :hover {
+            text-decoration: underline;
+        }
+
+    }
+
+
 `
 
 const Footer = () => {
     return (
         <Wrapper>
             <div style={{ width : "100vw", textAlign : "center"  }}>
-                Made during Chainlink Hackathon Fall 2021
+                Copyright © 2021 <a href="https://tamago.finance" target="_blank">Tamago Finance</a>
             </div>
         </Wrapper>
     )

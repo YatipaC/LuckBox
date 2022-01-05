@@ -3,6 +3,7 @@ import styled from "styled-components"
 import { useWeb3React } from "@web3-react/core"
 import Blockies from "react-blockies"
 
+
 import { shortAddress } from "../helper"
 import { Button } from "./Base"
 import WalletsModal from "./modals/WalletConnectModal"
@@ -38,6 +39,8 @@ const BlockiesContainer = styled(Blockies)`
   border-radius: 50%;
 `
 
+
+
 const Account = () => {
   const { account, deactivate, library } = useWeb3React()
 
@@ -46,30 +49,29 @@ const Account = () => {
   const toggleWalletConnect = () => setWalletLoginVisible(!walletLoginVisible)
 
   return (
-    <Wrapper>
-      <WalletsModal
-        toggleWalletConnect={toggleWalletConnect}
-        walletLoginVisible={walletLoginVisible}
-      />
-      <Container>
-        <div style={{ marginLeft: "auto", marginRight: "auto" }}>
-          {account ? (
-            <DisconnectButton onClick={deactivate}>
-              {/*<Display onClick={deactivate}>
-               <BlockiesContainer seed={account} size={12} scale={3} />
-              {shortAddress(account)} 
-            </Display>*/}
-              Disconnect 🔌
-            </DisconnectButton >
-          ) : (
-            <ConnectButton onClick={toggleWalletConnect}>
-              Connect 🏦
-            </ConnectButton>
-          )}
-        </div>
+    <>
+      <Wrapper>
+        <WalletsModal
+          toggleWalletConnect={toggleWalletConnect}
+          walletLoginVisible={walletLoginVisible}
+        />
+        <Container>
 
-      </Container>
-    </Wrapper>
+          <div style={{ marginRight: "auto", marginLeft: "auto" }}>
+            {account ? (
+              <DisconnectButton onClick={deactivate}>
+                Disconnect 🔌
+              </DisconnectButton >
+            ) : (
+              <ConnectButton onClick={toggleWalletConnect}>
+                Connect 🏦
+              </ConnectButton>
+            )}
+          </div>
+
+        </Container>
+      </Wrapper>
+    </>
   )
 }
 

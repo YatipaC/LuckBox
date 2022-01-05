@@ -1,5 +1,6 @@
 require("dotenv").config()
 
+require("hardhat-deploy")
 require("@nomiclabs/hardhat-etherscan")
 require("@nomiclabs/hardhat-waffle")
 require("hardhat-gas-reporter")
@@ -22,13 +23,32 @@ task("accounts", "Prints the list of accounts", async (taskArgs, hre) => {
  * @type import('hardhat/config').HardhatUserConfig
  */
 module.exports = {
-  solidity: "0.6.12",
+  solidity: {
+    version: "0.6.12",
+    settings: {
+      optimizer: {
+        enabled: true,
+        runs: 200,
+      },
+    },
+  },
   networks: {
     hardhat: {
-      forking: {
-        url: process.env.POLYGON_URL,
-        blockNumber: 20480699,
-      },
+      allowUnlimitedContractSize: true,
+      // forking: {
+      //   url: process.env.POLYGON_URL,
+      //   blockNumber: 20480699,
+      // },
+    },
+    polygon: {
+      allowUnlimitedContractSize: true,
+      url: process.env.POLYGON_URL,
+      accounts: [process.env.PRIVATEKEY],
+    },
+  },
+  namedAccounts: {
+    deployer: {
+      default: 0,
     },
   },
   mocha: {
@@ -39,6 +59,6 @@ module.exports = {
     currency: "USD",
   },
   etherscan: {
-    apiKey: process.env.ETHERSCAN_API_KEY,
+    apiKey: process.env.POLYGON_API_KEY,
   },
 }
