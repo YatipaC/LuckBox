@@ -267,7 +267,8 @@ describe("LuckBox", () => {
     // should able to claim 5 NFTs
     for (let id of tokenIds) {
       const ownerAddress = await erc721.ownerOf(id)
-      if ([0, 2, 3, 4, 6].indexOf(id) !== -1) {
+      // check claimed token
+      if ([0, 2, 3, 5, 6].indexOf(id) !== -1) {
         expect(ownerAddress).to.equal(admin.address)
       } else {
         expect(ownerAddress).to.equal(luckBox.address)
@@ -276,6 +277,11 @@ describe("LuckBox", () => {
 
     for (let id of tokenIds) {
       const slotData = await luckBox.list(id)
+      if(slotData.assetAddress === ethers.constants.AddressZero) {
+        expect(slotData.locked).to.equal(false)
+      } else {
+        expect(slotData.locked).to.equal(true)
+      }
       expect(slotData.pendingWinnerToClaim).to.equal(false)
       expect(slotData.winner).to.equal(ethers.constants.AddressZero)
     }

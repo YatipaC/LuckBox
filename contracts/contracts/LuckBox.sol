@@ -69,8 +69,8 @@ contract LuckBox is
   }
 
   mapping(uint256 => ReserveNft) public reserveQueue;
-  uint256 public firstQueue;
-  uint256 public lastQueue;
+  uint256 public firstQueue = 1;
+  uint256 public lastQueue = 0;
 
   uint8 public constant MAX_SLOT = 9;
 
