@@ -1,0 +1,6 @@
+config:
+  aws:region: ap-southeast-1
+  luckbox-scheduler:fullNodeUrl: ""
+  luckbox-scheduler:wallet: ""
+  luckbox-scheduler:factoryAddress: "0x3eaDF50b4452FE2EA981DB65Bc25D06EE2Fd2De2"
+
