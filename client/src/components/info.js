@@ -15,22 +15,35 @@ import {
 } from "reactstrap"
 import classnames from "classnames"
 
-const Wrapper = styled.div`
-  position: absolute;
-  top: 58%;
-  left: 0px;
-  width: 100vw;
-  display: flex;
-  justify-content: center;
+// const Wrapper = styled.div`
+//   position: absolute;
+//   top: 58%;
+//   left: 0px;
+//   width: 100vw;
+//   display: flex;
+//   justify-content: center;
 
-  a {
-    color: inherit;
+//   a {
+//     color: inherit;
+//   }
+
+//   p {
+//     margin-top: 5px;
+//   }
+// `
+
+const Wrapper = styled(Row)`
+  font-size: 20px;
+  line-height: 22px;
+  margin-top: 10px;
+
+  h2 {
+    margin-bottom: 10px;
+    text-decoration: underline;
   }
 
-  p {
-    margin-top: 5px;
-  }
 `
+
 
 const Box = styled.div`
   background-color: white;
@@ -93,7 +106,9 @@ const Content = styled.div`
   }
 `
 
-const Info = () => {
+
+
+const Info2 = () => {
   const [activeTab, setActiveTab] = useState("1")
 
   return (
@@ -154,7 +169,7 @@ const Info = () => {
                 <u>Steps</u> <br />
                 1) Connect your wallet and network <br />
                 2) You will see all collections (choose Box, NFT inside) available in the system, click through it to see what NFTs are being offered from them. <br />
-                3) Check out hitting chance by clicking one of the NFTs.<br/>
+                3) Check out hitting chance by clicking one of the NFTs.<br />
                 4) Draw it if you want and you will need to pay the ticket that will be transfered to the collection owner.
               </Content>
             </TabPane>
@@ -174,6 +189,75 @@ const Info = () => {
           </TabContent>
         </div>
       </Box>
+    </Wrapper>
+  )
+}
+
+const Links = styled.div`
+  display: flex;
+  height: 60px;
+  
+  div {
+    margin: auto;
+    a {
+      color: inherit;
+
+    }
+  }
+
+`
+
+const Info = () => {
+  return (
+    <Wrapper>
+
+      <Col md="6">
+        <h2>How To Play</h2>
+        <ol>
+          <li>Connect your wallet and network</li>
+          <li>You will see all collections (choose Box, NFT inside) available in the system, click through it to see what NFTs are being offered from them.</li>
+          <li>Check out hitting chance by clicking one of the NFTs.</li>
+          <li>Draw it if you want and you will need to pay the ticket that will be transfered to the collection owner.</li>
+        </ol>
+      </Col>
+      <Col md="6">
+        <h2>FAQs</h2>
+        <ol>
+          <li>
+            Which wallet can I connect to?
+            <ul>
+              <li>We support MetaMask, imToken, WalletConnect, and Wallet Link.</li>
+            </ul>
+          </li>
+          <li>
+            Which network is supported right now?
+            <ul>
+              <li>NFT Luckbox is currently live on Polygon Mainnet and Ethereum Mainnet</li>
+            </ul>
+          </li>
+          {/* <li>
+            How is the drawing mechanism?
+            <ul>
+              <li>The randomness of the Luck Box is very fair. The Gachapon contract owner will set a winning percentage. For example, if there are two NFTs in the Gachapon contract and the owner sets the probability of winning to 10%, it will send the request to Chainlink VRF to find a random number between 0 to 10,000. You will receive the first NFT if the number returned is between 0-1000 and the second NFT if the number is between 1001-2000. The rules are simple.</li>
+            </ul>
+          </li> */}
+          <li>
+            How can I check if I was lucky and claim my prize?
+            <ul>
+              If you win the prize, the LuckBox (Gachapon) smart contract will automatically transfer the NFT to you.
+            </ul>
+          </li>
+        </ol>
+      </Col>
+      <Col xs="12">
+
+        <Links>
+          <div>
+            <a href="https://docs.tamago.finance/" target="_blank">Docs</a> | <a href="https://t.me/tamagofinance" target="_blank">Telegram</a> | <a href="https://discord.gg/78fax5dPqk" target="_blank">Discord</a>
+          </div>
+        </Links>
+
+      </Col>
     </Wrapper>
   )
 }

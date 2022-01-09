@@ -79,10 +79,9 @@ export const Box = styled.div`
 `
 
 export const Button = styled.div`
-
-    background-color: #008080;
+    background-color: #3c3949;
     border-radius: 10px;
-    border: 3px solid #565049;
+    border: 3px solid #6d6b76;
     color: white;
     padding: 5px 20px 5px 20px;
     margin-top: 12px;

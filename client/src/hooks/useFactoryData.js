@@ -40,6 +40,7 @@ const Provider = ({ children }) => {
 
   const getAllBoxesDetail = async () => {
     const data = await fetchLuckBox(factoryDetail)
+ 
     setAllBoxesDetail(data)
   }
 
