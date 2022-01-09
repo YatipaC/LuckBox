@@ -2,7 +2,7 @@ import React, { useState, useEffect, useCallback, useContext } from "react"
 import { Button, Modal, ModalHeader, ModalBody, ModalFooter } from "reactstrap"
 import { useWeb3React } from "@web3-react/core"
 import styled from "styled-components"
-import {  toast } from 'react-toastify';
+import { toast } from 'react-toastify';
 import { Connectors } from "../../connectors"
 import useEagerConnect from "../../hooks/useEagerConnect"
 import useInactiveListener from "../../hooks/useInactiveListener"
@@ -19,7 +19,7 @@ const Connector = styled.div`
   :hover {
     cursor: pointer;
     color: white;
-    background-color: #008080;
+    background-color: #6d6b76;
   }
 
   display: flex;
@@ -63,7 +63,7 @@ function WalletsModal({ toggleWalletConnect, walletLoginVisible }) {
       //   toastr.warning("Unsupported Network", "Please switch to Polygon Mainnet")
       // alert("Please switch to Polygon Mainnet")
 
-      toast.warn('Please switch to Polygon!', {
+      toast.warn('Mainnet or Polygon Only!', {
         position: "top-right",
         autoClose: 5000,
         hideProgressBar: false,

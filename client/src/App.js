@@ -3,7 +3,9 @@ import bg from "./images/background.png"
 import Account from "./components/account"
 import Assets from "./components/assets"
 import styled, { createGlobalStyle } from "styled-components"
-import ParticlesBg from "particles-bg"
+
+import { Container } from "reactstrap"
+
 // import bg from './images/background.png'
 import Footer from "./components/footer"
 import Title from "./components/title"
@@ -11,6 +13,8 @@ import Draw from "./components/draw"
 import Info from "./components/info"
 import CreateLuckBoxModal from "./components/modals/CreateLuckBoxModal"
 import Manage from "./components/manage"
+import Intro from "./components/intro"
+import Collections from "./components/collections"
 
 const GlobalStyle = createGlobalStyle`
   * {
@@ -21,7 +25,8 @@ const GlobalStyle = createGlobalStyle`
 
   body {
     font-family: 'VT323', monospace;
-    color: #231F20;
+    color: white;
+    background-color: #0b081b;
     
     /* Full height */
     height: 100vh;
@@ -33,7 +38,6 @@ const GlobalStyle = createGlobalStyle`
   }
 `
 
-const Wrapper = styled.div``
 
 function App() {
   const [luckBoxSelected, setLuckBoxSelected] = useState()
@@ -50,8 +54,41 @@ function App() {
   return (
     <>
       <GlobalStyle />
-      <ParticlesBg type='square' bg={true} />
-      <Wrapper>
+
+      <Container>
+        <Account setLuckBoxSelected={setLuckBoxSelected} />
+
+        {luckBoxSelected
+          ?
+          <>
+            {manageSelected ? (
+              <Manage
+                data={luckBoxSelected}
+                toggleManageSelected={toggleManageSelected}
+              />
+            ) : (
+              <Draw
+                data={luckBoxSelected}
+                setLuckBoxSelected={setLuckBoxSelected}
+                toggleManageSelected={toggleManageSelected}
+              />
+            )}
+          </>
+          :
+          <>
+            <Intro />
+            <Collections
+              toggleCreateLuckBox={toggleCreateLuckBox}
+              setLuckBoxSelected={setLuckBoxSelected}
+            />
+
+          </>
+        }
+        <Info />
+        <Footer />
+      </Container>
+
+      {/* <Wrapper>
         <Account />
         <CreateLuckBoxModal
           toggleModal={toggleCreateLuckBox}
@@ -80,11 +117,10 @@ function App() {
               setLuckBoxSelected={setLuckBoxSelected}
             />
             <Info />
-
             <Footer />
           </>
         )}
-      </Wrapper>
+      </Wrapper> */}
     </>
   )
 }
