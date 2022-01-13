@@ -386,6 +386,37 @@ const NftDetails = ({ selectedNftDetail, imageUrl }) => {
           </p>
         </>
       )}
+
+      {selectedNftDetail && selectedNftDetail.assetAddress === "0x74FF3978db218e621BcdE8114B544bB605aDFa08" && (
+        <>
+          <hr />
+          <p>
+            The value-backed NFT was invented by Tamago Finance team, each represents specific amount of US currency. The NFT can be redeemed as its price tag into collateral tokens of WMATIC and USDC. 
+          </p>
+
+          <p>
+            Links :{" "}
+            <a
+              href='https://opensea.io/collection/lucky-red-envelope-on-polygon'
+              target='_blank'
+            >
+              OpenSea
+            </a>
+            ,{" "}
+            <a href='https://www.twitter.com/tamagofinance' target='_blank'>
+              Twitter
+            </a>
+            ,{" "}
+            <a
+              href='https://app-v2.tamago.finance/'
+              target='_blank'
+            >
+              Redeem
+            </a>
+          </p>
+        </>
+      )}
+
     </NftDetailsContainer>
   )
 }

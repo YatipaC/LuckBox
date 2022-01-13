@@ -136,7 +136,7 @@ function AddNftModal({ toggleModal, modalVisible, boxAddress, slotId }) {
       <ModalHeader style={{ color: "#000" }} toggle={toggleModal}>
         Add Nft
       </ModalHeader>
-      <ModalBody>
+      <ModalBody style={{ color : "black"}}> 
         <InputHeader>Slot: {slotId + 1}</InputHeader>
         <InputGroupContainer>
           <InputHeader>Random Percent (1 - 20%)</InputHeader>

@@ -58,7 +58,7 @@ function SetTicketPriceModal({ toggleModal, modalVisible, boxAddress }) {
       <ModalHeader style={{ color: "#000" }} toggle={toggleModal}>
         Set Ticket Price
       </ModalHeader>
-      <ModalBody>
+      <ModalBody style={{color : "black"}}>
         <InputGroupContainer>
           <InputHeader>Ticket Price</InputHeader>
           <InputGroup>

@@ -2,13 +2,13 @@ import BigNumber from "bignumber.js"
 import multicall from "../../utils/multicall"
 import FactoryABI from "../../abi/Factory.json"
 
-const fetchFactory = async (factoryToFetch) => {
+const fetchFactory = async (factoryToFetch, rpcServer) => {
   const [totalBoxes] = await multicall(FactoryABI, [
     {
       address: factoryToFetch,
       name: "totalBoxes",
     },
-  ])
+  ], rpcServer)
 
   const result = await Promise.all(
     Array(parseInt(totalBoxes[0]))

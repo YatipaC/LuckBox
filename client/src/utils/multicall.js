@@ -2,11 +2,11 @@ import { Interface } from "@ethersproject/abi"
 import Web3 from "web3"
 
 import MulticallABI from "../abi/Multicall.json"
-import { MULTICALL_ADDRESS , POLYGON_RPC_SERVER } from "../constants"
+import { MULTICALL_ADDRESS, POLYGON_RPC_SERVER } from "../constants"
 
-const multicall = async (abi, calls) => {
+const multicall = async (abi, calls, RPC_SERVER = POLYGON_RPC_SERVER) => {
   const httpProvider = new Web3.providers.HttpProvider(
-    POLYGON_RPC_SERVER,
+    RPC_SERVER,
     { timeout: 10000 }
   )
   const web3 = new Web3(httpProvider)

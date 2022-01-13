@@ -12,7 +12,7 @@ import {
 } from "reactstrap"
 import { useWeb3React } from "@web3-react/core"
 import styled from "styled-components"
-import { FACTORY } from "../../constants"
+import { FACTORY_POLYGON } from "../../constants"
 import { useFactory } from "../../hooks/useFactory"
 
 const InputGroupContainer = styled.div`
@@ -29,7 +29,7 @@ const InputHeader = styled.div`
 
 function CreateLuckBoxModal({ toggleModal, modalVisible }) {
   const { account, library } = useWeb3React()
-  const { createLuckBox } = useFactory(FACTORY, account, library)
+  const { createLuckBox } = useFactory(FACTORY_POLYGON, account, library)
   const [loading, setLoading] = useState(false)
   const useInput = (initialState) => {
     const [value, setValue] = useState(initialState)

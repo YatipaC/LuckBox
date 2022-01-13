@@ -19,12 +19,12 @@ const InputGroupContainer = styled.div`
   display: flex;
   flex-direction: column;
   width: 100%;
-  margin-bottom: 12px;
+  margin-bottom: 12px; 
 `
 
 const InputHeader = styled.div`
   font-size: 16px;
-  margin-bottom: 8px;
+  margin-bottom: 8px; 
 `
 
 const TypeButton = styled.div`
@@ -130,7 +130,7 @@ function AddNftModal({ toggleModal, modalVisible, boxAddress }) {
       <ModalHeader style={{ color: "#000" }} toggle={toggleModal}>
         Add Nft
       </ModalHeader>
-      <ModalBody>
+      <ModalBody style={{color : "black"}}>
         <InputGroupContainer>
           <InputHeader>Random Percent</InputHeader>
           <InputGroup>
