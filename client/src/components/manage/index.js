@@ -14,6 +14,7 @@ import { LeftArrow, RightArrow, Arrow } from "../Base"
 
 const Wrapper = styled.div`
   height: 100vh;
+  color: black;
 `
 
 const TitleContainer = styled.div`
@@ -29,6 +30,7 @@ const Container = styled.div`
   top: 3%;
   display: flex;
   flex-direction: column;
+  color: white;
 `
 
 const BoxContainer = styled.div`

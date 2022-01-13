@@ -61,6 +61,38 @@ const Box = ({ data, setLuckBoxSelected }) => {
     )
 }
 
+const Switcher = styled(
+    ({ className }) => {
+
+        const { currentNetwork, updateNetwork } = useContext(FactoryContext)
+
+        return (
+            <div className={className}>
+                <h4>
+                    <a className={ currentNetwork === "mainnet" && "selected" } onClick={() => updateNetwork("mainnet")}>Mainnet</a>
+                    {` `}|{` `}
+                    <a className={ currentNetwork === "polygon" && "selected" } onClick={() => updateNetwork("polygon")}>Polygon</a>
+                </h4>
+            </div>
+        )
+    }
+)`
+
+text-align: center;
+padding: 0px;
+
+a {
+    cursor: pointer;
+    color: inherit;
+}
+
+.selected {
+    text-decoration: underline;
+}
+
+`
+
+
 const Collections = ({ setLuckBoxSelected, toggleCreateLuckBox }) => {
 
     let sliderRef = useRef();
@@ -109,6 +141,7 @@ const Collections = ({ setLuckBoxSelected, toggleCreateLuckBox }) => {
         <Row style={{ marginTop: 10 }}>
             <Col xs="12">
                 <h2>Collections</h2>
+                <Switcher />
                 <Body>
                     {allBoxesDetail && (
                         <>
