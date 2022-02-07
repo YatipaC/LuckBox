@@ -1,4 +1,5 @@
 import { InjectedConnector } from "@web3-react/injected-connector"
+import { UAuthConnector } from "@uauth/web3-react"
 // import { PortisConnector } from '@web3-react/portis-connector'
 // import { TorusConnector } from '@web3-react/torus-connector'
 import { WalletConnectConnector } from "@web3-react/walletconnect-connector"
@@ -10,6 +11,7 @@ import WalletConnectLogo from "./images/wallet-provider/wallet-connect.svg"
 // import PortisLogo from './images/wallet-provider/portis.png'
 import CoinbaseLogo from "./images/wallet-provider/coinbase.svg"
 import ImTokenLogo from "./images/wallet-provider/imToken.jpeg"
+import UnstopableDomainLogo from "./images/wallet-provider/unstopable.jpeg"
 
 import { POLYGON_RPC_SERVER, MAINNET_RPC_SERVER } from "./constants"
 
@@ -29,6 +31,18 @@ export const walletconnect = new WalletConnectConnector({
   bridge: "https://bridge.walletconnect.org",
   qrcode: true,
   pollingInterval: 15000,
+})
+
+export const uauth = new UAuthConnector({
+  clientID: "ItpQh1IrZ8BLztae0KGsl4AvYCQVBpSgXdHS1po9VD8=",
+  clientSecret: "xQxSSxj1lYX1D3dLad+Fam8pcVuU1WHeZRNVylPCJsY=",
+  redirectUri: "https://app.tamago.finance/",
+  postLogoutRedirectUri: "https://app.tamago.finance/",
+  // Scope must include openid and wallet
+  scope: 'openid wallet',
+
+  // Injected and walletconnect connectors are required.
+  connectors: {injected, walletconnect},
 })
 
 // mainnet only
@@ -80,4 +94,9 @@ export const Connectors = [
     connector: walletlink,
     img: CoinbaseLogo,
   },
+  {
+    name: "Unstoppable Domain",
+    connector: uauth,
+    img: UnstopableDomainLogo
+  }
 ]
