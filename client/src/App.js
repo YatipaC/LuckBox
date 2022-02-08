@@ -15,6 +15,7 @@ import CreateLuckBoxModal from "./components/modals/CreateLuckBoxModal"
 import Manage from "./components/manage"
 import Intro from "./components/intro"
 import Collections from "./components/collections"
+import Collections2 from "./components/collections2"
 
 const GlobalStyle = createGlobalStyle`
   * {
@@ -77,10 +78,16 @@ function App() {
           :
           <>
             <Intro />
-            <Collections
+
+            <Collections2
               toggleCreateLuckBox={toggleCreateLuckBox}
               setLuckBoxSelected={setLuckBoxSelected}
             />
+
+            {/* <Collections
+              toggleCreateLuckBox={toggleCreateLuckBox}
+              setLuckBoxSelected={setLuckBoxSelected}
+            /> */}
 
           </>
         }
