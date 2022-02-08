@@ -171,4 +171,6 @@ const Collections = ({ setLuckBoxSelected, toggleCreateLuckBox }) => {
     )
 }
 
+
+
 export default Collections
