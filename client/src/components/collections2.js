@@ -223,7 +223,7 @@ const BoxBody = styled(
                     <div>
                         <b>Collection Info:</b>
                         <p>
-                            {collection.description || ""}
+                            {collection && collection.description || ""}
                         </p>
                         <b>Creator Address:</b>{` `}<a href={`https://polygonscan.com/address/${item.owner}`} target="_blank">{(item && item.owner) ? shortAddress(item.owner, 7, -5) : ""}</a>
                         <br />
@@ -369,7 +369,6 @@ const Collection2 = ({
                                     <><BoxBody item={item} odd={odd} /><BoxHeader setLuckBoxSelected={setLuckBoxSelected} item={item} index={index} /></>
                                 }
                             </Box>
-
                         )
                     })}
                 </Boxes>
